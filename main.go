@@ -1,7 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	p2p "github.com/O-RD/ths_monorepo/p2p"
+)
 
 func main() {
-	fmt.Println(THSType)
+
+	p2p := p2p.P2p_init()
+	fmt.Println(p2p)
 }
