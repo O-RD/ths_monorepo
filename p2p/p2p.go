@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"time"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/crypto"
@@ -12,10 +13,12 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 
+	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/multiformats/go-multiaddr"
 )
 
 func PeerInSlice(a peer.ID, list []peer.ID) bool {
+	fmt.Println(ths.THSType)
 	for _, b := range list {
 		if b == a {
 			return true
@@ -55,51 +58,13 @@ func create_host() (host.Host, error) {
 	//return libp2p.New()
 }
 
-// func create_peer(h host.Host, ctx context.Context) {
-
-// 	//a := get_list(h, *channel_id, ctx)
-// 	fmt.Println(status_struct.Chan)
-// 	peerChan := initMDNS(h, status_struct.Chan)
-// 	time.Sleep(time.Second * 5)
-
-// 	//added now
-// 	//var a string
-// 	//fmt.Scanln(&a)
-
-// 	var var_counter int = 1
-// 	for peer := range peerChan {
-// 		//log.Println(var_counter, *num_users)
-// 		if peer.ID == h.ID() {
-// 			continue
-// 		}
-
-// 		log.Println("Found peer:", peer, ", connecting")
-// 		if err := h.Connect(ctx, peer); err != nil {
-// 			log.Println("Connection failed:", err)
-// 		} else {
-// 			var_counter += 1
-// 			//temp := peer_details{peer.ID, peer}
-// 			//function_peer_chan <- temp
-// 			//log.Println("Connected to ", peer.Addrs[0])
-// 			//fmt.Println(peer.ID)
-// 			peer_details_list = append(peer_details_list, peer_details{peer.ID, peer})
-// 			//log.Println(peer_details_list[0].id)
-// 			if var_counter == status_struct.Num_peers {
-// 				//log.Println("get out")
-// 				time.Sleep(time.Second * 6)
-// 				break
-// 			}
-// 		}
-// 	}
-// }
-
-func start_p2p() *P2P {
+func Start_p2p() *ths.P2P {
 
 	//select {}
 
 	//1. Setup Host
 	var h, _ = create_host()
-	log.Println(h.Addrs()[0].String() + "/p2p/" + h.ID().String())
+	// log.Println(h.Addrs()[0].String() + "/p2p/" + h.ID().String())
 	//2.
 	ctx := context.Background()
 	// create_peer(h, ctx)
@@ -108,7 +73,7 @@ func start_p2p() *P2P {
 	// 	log.Println(i, item.addr.Addrs[0])
 	// }
 
-	return &P2P{
+	return &ths.P2P{
 		Host:    h,
 		Host_ip: h.Addrs()[0].String() + "/p2p/" + h.ID().String(),
 		Ctx:     ctx,
@@ -118,4 +83,42 @@ func start_p2p() *P2P {
 	//fmt.Println("Enter choice")
 
 	//choice =1
+}
+
+func create_peer(h host.Host, ctx context.Context) {
+
+	//a := get_list(h, *channel_id, ctx)
+	fmt.Println(ths.Channel)
+	peerChan := initMDNS(h, ths.Channel)
+	time.Sleep(time.Second * 5)
+
+	//added now
+	//var a string
+	//fmt.Scanln(&a)
+
+	var var_counter int = 1
+	for peer := range peerChan {
+		//log.Println(var_counter, *num_users)
+		if peer.ID == h.ID() {
+			continue
+		}
+
+		log.Println("Found peer:", peer, ", connecting")
+		if err := h.Connect(ctx, peer); err != nil {
+			log.Println("Connection failed:", err)
+		} else {
+			var_counter += 1
+			//temp := peer_details{peer.ID, peer}
+			//function_peer_chan <- temp
+			//log.Println("Connected to ", peer.Addrs[0])
+			//fmt.Println(peer.ID)
+			peer_details_list = append(peer_details_list, peer_details{peer.ID, peer})
+			//log.Println(peer_details_list[0].id)
+			if var_counter == status_struct.Num_peers {
+				//log.Println("get out")
+				time.Sleep(time.Second * 6)
+				break
+			}
+		}
+	}
 }
