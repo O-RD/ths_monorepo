@@ -1,8 +1,14 @@
 package main
 
-import "flag"
+import (
+	"flag"
+)
 
-func process_flags() {
+func process_flags() (string, string, int) {
 
-	var nFlag = flag.String("np", "41803", "help message for flag n")
+	var port = *flag.String("p", "41803", "channel id for connecting")
+	var version = *flag.String("t", "t1", "Type of run")
+	var threshold = *flag.Int("thresh", 2, "Type of run")
+
+	return port, version, threshold
 }

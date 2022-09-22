@@ -8,6 +8,10 @@ import (
 
 func main() {
 
-	p2p := p2p.P2p_init()
-	fmt.Println(p2p)
+	party := p2p.P2p_init()
+	var version string
+	party.Port, version, party.Threshold = process_flags() //Adds port number to p2p struct
+	fmt.Println(party, version)
+	//MDNS
+	party.Create_peer()
 }

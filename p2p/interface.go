@@ -1,9 +1,10 @@
-package ths
+package p2p
 
 import (
 	"context"
 
 	"github.com/libp2p/go-libp2p-core/host"
+	"github.com/libp2p/go-libp2p-core/peer"
 )
 
 type P2P struct {
@@ -13,4 +14,13 @@ type P2P struct {
 	Host_ip string
 	Ctx     context.Context
 	Peers   []string
+
+	Threshold int
+	Port      string
+	ThsType   string
+}
+
+type Peer_details struct {
+	Id   peer.ID
+	Addr peer.AddrInfo
 }

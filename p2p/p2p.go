@@ -10,22 +10,20 @@ import (
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/crypto"
 	"github.com/libp2p/go-libp2p-core/host"
-	"github.com/libp2p/go-libp2p-core/peer"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 
-	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/multiformats/go-multiaddr"
 )
 
-func PeerInSlice(a peer.ID, list []peer.ID) bool {
-	fmt.Println(ths.THSType)
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
+// func PeerInSlice(a peer.ID, list []peer.ID) bool {
+// 	fmt.Println(ths.THSType)
+// 	for _, b := range list {
+// 		if b == a {
+// 			return true
+// 		}
+// 	}
+// 	return false
+// }
 
 func create_host() (host.Host, error) {
 
@@ -58,7 +56,7 @@ func create_host() (host.Host, error) {
 	//return libp2p.New()
 }
 
-func Start_p2p() *ths.P2P {
+func Start_p2p() *P2P {
 
 	//select {}
 
@@ -73,7 +71,7 @@ func Start_p2p() *ths.P2P {
 	// 	log.Println(i, item.addr.Addrs[0])
 	// }
 
-	return &ths.P2P{
+	return &P2P{
 		Host:    h,
 		Host_ip: h.Addrs()[0].String() + "/p2p/" + h.ID().String(),
 		Ctx:     ctx,
@@ -85,11 +83,13 @@ func Start_p2p() *ths.P2P {
 	//choice =1
 }
 
-func create_peer(h host.Host, ctx context.Context) {
+var peer_details_list []string
+
+func (inputP2P P2P) Create_peer() {
 
 	//a := get_list(h, *channel_id, ctx)
-	fmt.Println(ths.Channel)
-	peerChan := initMDNS(h, ths.Channel)
+
+	peerChan := initMDNS(inputP2P.Host, inputP2P.Port)
 	time.Sleep(time.Second * 5)
 
 	//added now
@@ -99,12 +99,12 @@ func create_peer(h host.Host, ctx context.Context) {
 	var var_counter int = 1
 	for peer := range peerChan {
 		//log.Println(var_counter, *num_users)
-		if peer.ID == h.ID() {
+		if peer.ID == inputP2P.Host.ID() {
 			continue
 		}
 
 		log.Println("Found peer:", peer, ", connecting")
-		if err := h.Connect(ctx, peer); err != nil {
+		if err := inputP2P.Host.Connect(inputP2P.Ctx, peer); err != nil {
 			log.Println("Connection failed:", err)
 		} else {
 			var_counter += 1
@@ -112,9 +112,9 @@ func create_peer(h host.Host, ctx context.Context) {
 			//function_peer_chan <- temp
 			//log.Println("Connected to ", peer.Addrs[0])
 			//fmt.Println(peer.ID)
-			peer_details_list = append(peer_details_list, peer_details{peer.ID, peer})
+			// peer_details_list = append(peer_details_list, ths.Peer_details{peer.ID, peer})
 			//log.Println(peer_details_list[0].id)
-			if var_counter == status_struct.Num_peers {
+			if var_counter == 3 {
 				//log.Println("get out")
 				time.Sleep(time.Second * 6)
 				break
