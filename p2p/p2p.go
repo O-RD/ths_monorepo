@@ -2,6 +2,7 @@ package p2p
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -56,7 +57,7 @@ func create_host() (host.Host, error) {
 	//return libp2p.New()
 }
 
-func Start_p2p() *P2P {
+func P2p_init(p2p_chan chan P2P) {
 
 	//select {}
 
@@ -65,60 +66,65 @@ func Start_p2p() *P2P {
 	// log.Println(h.Addrs()[0].String() + "/p2p/" + h.ID().String())
 	//2.
 	ctx := context.Background()
-	// create_peer(h, ctx)
+	var p P2P
+	p.Host = h
+	p.Host_ip = h.Addrs()[0].String() + "/p2p/" + h.ID().String()
+	p.Ctx = ctx
+	// Create_peer(p)
+	p2p_chan <- p
+	close(p2p_chan)
 
-	// for i, item := range peer_details_list {
-	// 	log.Println(i, item.addr.Addrs[0])
-	// }
-
-	return &P2P{
-		Host:    h,
-		Host_ip: h.Addrs()[0].String() + "/p2p/" + h.ID().String(),
-		Ctx:     ctx,
-		Peers:   []string{},
-	}
-	//var choice int
-	//fmt.Println("Enter choice")
-
-	//choice =1
 }
 
 var peer_details_list []string
 
-func (inputP2P P2P) Create_peer() {
+func (p P2P) Create_peer() {
 
 	//a := get_list(h, *channel_id, ctx)
 
-	peerChan := initMDNS(inputP2P.Host, inputP2P.Port)
+	//Setup listener
+	connection_Stream_listener(&p)
+
+	peerChan := initMDNS(p.Host, p.Port)
 	time.Sleep(time.Second * 5)
 
-	//added now
-	//var a string
-	//fmt.Scanln(&a)
-
-	var var_counter int = 1
-	for peer := range peerChan {
+	for external_peer := range peerChan {
 		//log.Println(var_counter, *num_users)
-		if peer.ID == inputP2P.Host.ID() {
+		if external_peer.ID == p.Host.ID() {
 			continue
 		}
 
-		log.Println("Found peer:", peer, ", connecting")
-		if err := inputP2P.Host.Connect(inputP2P.Ctx, peer); err != nil {
+		// log.Println("Found peer:", external_peer, ", connecting")
+		if err := p.Host.Connect(p.Ctx, external_peer); err != nil {
 			log.Println("Connection failed:", err)
 		} else {
-			var_counter += 1
-			//temp := peer_details{peer.ID, peer}
-			//function_peer_chan <- temp
-			//log.Println("Connected to ", peer.Addrs[0])
-			//fmt.Println(peer.ID)
-			// peer_details_list = append(peer_details_list, ths.Peer_details{peer.ID, peer})
-			//log.Println(peer_details_list[0].id)
-			if var_counter == 3 {
-				//log.Println("get out")
-				time.Sleep(time.Second * 6)
-				break
+
+			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "moniker")
+			message := moniker_message{
+				Name: p.Moniker,
 			}
+			b_message, _ := json.Marshal(message)
+			_, err = send_stream.Write(append(b_message, '\n'))
+			p.Connectedparties += 1
+			break_flag := 0
+			for {
+				if break_flag == 1 {
+					break
+				}
+				for i := 0; i < len(p.Peers); i++ {
+					if p.Peers[i].Id == external_peer.ID {
+						log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Name)
+
+						break_flag = 1
+					}
+					time.Sleep(time.Second)
+				}
+			}
+
+		}
+		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
+			time.Sleep(time.Second * 2)
+			break
 		}
 	}
 }
