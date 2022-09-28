@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-core/crypto"
-	"github.com/libp2p/go-libp2p-core/host"
+	crypto "github.com/libp2p/go-libp2p/core/crypto"
+	"github.com/libp2p/go-libp2p/core/host"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 
 	"github.com/multiformats/go-multiaddr"
@@ -60,6 +60,7 @@ func create_host() (host.Host, error) {
 func P2p_init(p2p_chan chan P2P) {
 
 	//select {}
+	//Open Send channel
 
 	//1. Setup Host
 	var h, _ = create_host()
@@ -78,12 +79,12 @@ func P2p_init(p2p_chan chan P2P) {
 
 var peer_details_list []string
 
-func (p P2P) Create_peer() {
+func (p *P2P) Create_peer() {
 
 	//a := get_list(h, *channel_id, ctx)
 
 	//Setup listener
-	connection_Stream_listener(&p)
+	connection_Stream_listener(p)
 
 	peerChan := initMDNS(p.Host, p.Port)
 	time.Sleep(time.Second * 5)
@@ -96,7 +97,7 @@ func (p P2P) Create_peer() {
 
 		// log.Println("Found peer:", external_peer, ", connecting")
 		if err := p.Host.Connect(p.Ctx, external_peer); err != nil {
-			log.Println("Connection failed:", err)
+			log.Println("Connection failed:", external_peer.ID)
 		} else {
 
 			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "moniker")
@@ -113,7 +114,7 @@ func (p P2P) Create_peer() {
 				}
 				for i := 0; i < len(p.Peers); i++ {
 					if p.Peers[i].Id == external_peer.ID {
-						log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Name)
+						log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Moniker)
 
 						break_flag = 1
 					}

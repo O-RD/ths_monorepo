@@ -4,7 +4,8 @@ import (
 	"bufio"
 	"encoding/json"
 
-	"github.com/libp2p/go-libp2p-core/network"
+	"github.com/O-RD/ths_monorepo/ths"
+	"github.com/libp2p/go-libp2p/core/network"
 )
 
 func connection_Stream_listener(p *P2P) {
@@ -22,8 +23,8 @@ func connection_Stream_listener(p *P2P) {
 		json.Unmarshal(bytes, &message_receive)
 
 		l.Lock()
-		p.Peers = append(p.Peers, peer_names{Id: s.Conn().RemotePeer(),
-			Name: message_receive.Name})
+		p.Peers = append(p.Peers, ths.THS{Id: s.Conn().RemotePeer(),
+			Moniker: message_receive.Name})
 		l.Unlock()
 
 		s.Close()

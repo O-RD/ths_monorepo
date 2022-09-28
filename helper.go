@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+
+	"github.com/O-RD/ths_monorepo/p2p"
 )
 
 func Process_flags() (string, string, int, int, string) {
@@ -12,4 +14,7 @@ func Process_flags() (string, string, int, int, string) {
 	var party_size = *flag.Int("n", 3, "N value")
 	var moniker = *flag.String("m", "Default_Name", "Moniker")
 	return port, version, threshold, party_size, moniker
+}
+func Sort_Peers(p *p2p.P2P) {
+
 }
