@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 
-	"github.com/O-RD/ths_monorepo/ths"
+	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/libp2p/go-libp2p/core/network"
 )
 
-func connection_Stream_listener(p *ths.P2P) {
+func Connection_Stream_listener(p *ths.P2P) {
 	//fmt.Println("Got a new stream!")
 
-	p.Host.SetStreamHandler("moniker", func(s network.Stream) {
+	p.Host.SetStreamHandler("ths_stream", func(s network.Stream) {
 		// log.Println("sender received new stream")
 
 		buf := bufio.NewReader(s)

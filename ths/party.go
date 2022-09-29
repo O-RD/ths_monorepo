@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/O-RD/ths_monorepo/p2p"
 	"github.com/libp2p/go-libp2p"
 	crypto "github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
@@ -84,7 +85,7 @@ func Create_peer(p *P2P) {
 	//a := get_list(h, *channel_id, ctx)
 
 	//Setup listener
-	// connection_Stream_listener(p)
+	p2p.Connection_Stream_listener(p)
 
 	peerChan := initMDNS(p.Host, p.Port)
 	time.Sleep(time.Second * 5)
@@ -100,7 +101,7 @@ func Create_peer(p *P2P) {
 			log.Println("Connection failed:", external_peer.ID)
 		} else {
 
-			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "moniker")
+			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "ths_stream")
 			message := Moniker_message{
 				Name: p.Moniker,
 			}
