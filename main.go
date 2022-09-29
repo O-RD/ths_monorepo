@@ -10,6 +10,7 @@ func main() {
 
 	// party := p2p.P2p_init()
 	// var version string
+
 	var party ths.P2P
 
 	//Init P2P values to Party
@@ -23,6 +24,7 @@ func main() {
 	// fmt.Println(version)
 	//MDNS
 
+	p2p.Connection_Stream_listener(&party)
 	p2p.Create_Peer(&party)
 	// ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
 
