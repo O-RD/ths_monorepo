@@ -1,4 +1,4 @@
-package p2p
+package ths
 
 import (
 	"github.com/libp2p/go-libp2p/core/host"

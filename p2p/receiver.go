@@ -8,7 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 )
 
-func connection_Stream_listener(p *P2P) {
+func connection_Stream_listener(p *ths.P2P) {
 	//fmt.Println("Got a new stream!")
 
 	p.Host.SetStreamHandler("moniker", func(s network.Stream) {
@@ -19,7 +19,7 @@ func connection_Stream_listener(p *P2P) {
 		str, _ := buf.ReadBytes('\n')
 
 		bytes := []byte(str)
-		var message_receive moniker_message
+		var message_receive ths.Moniker_message
 		json.Unmarshal(bytes, &message_receive)
 
 		l.Lock()

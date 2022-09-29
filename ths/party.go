@@ -1,4 +1,4 @@
-package p2p
+package ths
 
 import (
 	"context"
@@ -79,12 +79,12 @@ func P2p_init(p2p_chan chan P2P) {
 
 var peer_details_list []string
 
-func (p *P2P) Create_peer() {
+func Create_peer(p *P2P) {
 
 	//a := get_list(h, *channel_id, ctx)
 
 	//Setup listener
-	connection_Stream_listener(p)
+	// connection_Stream_listener(p)
 
 	peerChan := initMDNS(p.Host, p.Port)
 	time.Sleep(time.Second * 5)
@@ -101,7 +101,7 @@ func (p *P2P) Create_peer() {
 		} else {
 
 			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "moniker")
-			message := moniker_message{
+			message := Moniker_message{
 				Name: p.Moniker,
 			}
 			b_message, _ := json.Marshal(message)

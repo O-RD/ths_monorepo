@@ -7,7 +7,7 @@ import (
 	"github.com/O-RD/ths_monorepo/ths"
 )
 
-func Start(send_chan chan ths.Message, p p2p.P2P) {
+func Start(send_chan chan ths.Message, p ths.P2P) {
 
 	go p2p.Send(send_chan)
 	for i := 0; i < len(p.Peers); i++ {
