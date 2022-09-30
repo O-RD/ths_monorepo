@@ -1,0 +1,14 @@
+// var wg sync.WaitGroup
+	// go func(send_chan chan ths.Message) {
+	// 	wg.Add(1)
+	// 	defer wg.Done()
+	// 	p2p.Send(send_chan)
+	// }(send_chan)
+
+
+    	// var end int = 0
+		// if i == len(p.Peers)-1 {
+		// 	end = 1
+		// }
+
+        	// wg.Wait()

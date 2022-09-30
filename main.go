@@ -21,13 +21,15 @@ func main() {
 
 	party = <-p2p_ch
 	party.Port, _, party.Threshold, party.Party_Size, party.Moniker = Process_flags() //Adds port number to p2p struct
-	// fmt.Println(version)
+
 	//MDNS
 
-	p2p.Connection_Stream_listener(&party)
+	var send_chan = make(chan ths.Message)
+	var receiver_ch = make(chan ths.Payload)
+	p2p.Connection_Stream_listener(&party) //add channel)
 	p2p.Create_Peer(&party)
+
 	// ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
 
-	var send_chan = make(chan ths.Message)
-	keygen.Start(send_chan, party)
+	keygen.Start(send_chan, &party, receiver_ch)
 }

@@ -13,11 +13,17 @@ type THS struct {
 }
 
 type Message struct {
-	From    peer.ID
+	From    P2P
 	To      peer.ID
+	Type    int
+	Payload string
+	End     int
+}
+type Payload struct {
+	Sender  peer.ID
+	Type    int
 	Payload string
 }
-
 type P2P struct {
 
 	// Represents the libp2p host
@@ -38,5 +44,5 @@ type P2P struct {
 }
 
 type Moniker_message struct {
-	Name string
+	Moniker string
 }

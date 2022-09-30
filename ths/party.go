@@ -101,7 +101,7 @@ func Create_peer(p *P2P) {
 
 			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "ths_stream")
 			message := Moniker_message{
-				Name: p.Moniker,
+				Moniker: p.Moniker,
 			}
 			b_message, _ := json.Marshal(message)
 			_, err = send_stream.Write(append(b_message, '\n'))
