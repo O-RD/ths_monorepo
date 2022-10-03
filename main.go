@@ -8,6 +8,10 @@ import (
 
 func main() {
 
+	start_keygen()
+}
+
+func start_keygen() {
 	// party := p2p.P2p_init()
 	// var version string
 

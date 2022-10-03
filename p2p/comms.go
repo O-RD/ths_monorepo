@@ -14,9 +14,10 @@ func Send(message_channel chan ths.Message) {
 
 		send_stream, _ := message_data.From.Host.NewStream(message_data.From.Ctx, message_data.To, "ths_stream")
 		message := ths.Payload{
-			Sender:  message_data.From.Host.ID(),
-			Type:    message_data.Type,
-			Payload: message_data.Payload,
+			Sender:       message_data.From.Host.ID(),
+			Type:         message_data.Type,
+			Payload_name: message_data.Payload_name,
+			Payload:      message_data.Payload,
 		}
 		b_message, _ := json.Marshal(message)
 		_, _ = send_stream.Write(append(b_message, '\n'))

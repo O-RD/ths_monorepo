@@ -13,16 +13,18 @@ type THS struct {
 }
 
 type Message struct {
-	From    P2P
-	To      peer.ID
-	Type    int
-	Payload string
-	End     int
+	From         P2P
+	To           peer.ID
+	Type         int
+	Payload_name string
+	Payload      string
+	End          int
 }
 type Payload struct {
-	Sender  peer.ID
-	Type    int
-	Payload string
+	Sender       peer.ID
+	Type         int
+	Payload_name string
+	Payload      string
 }
 type P2P struct {
 
@@ -45,4 +47,10 @@ type P2P struct {
 
 type Moniker_message struct {
 	Moniker string
+}
+
+type Keygen_Store struct {
+	V1 string
+	V2 string
+	V3 string
 }
