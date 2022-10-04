@@ -135,5 +135,5 @@ func Sort_Peers(party *P2P) {
 		}
 	}
 	party.Sorted_Peers = list_of_external
-	fmt.Println(party.My_Index, party.Sorted_Peers)
+
 }
