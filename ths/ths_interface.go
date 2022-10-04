@@ -10,6 +10,7 @@ import (
 type THS struct {
 	Id      peer.ID
 	Moniker string
+	Round   int
 }
 
 type Message struct {
@@ -43,6 +44,8 @@ type P2P struct {
 	Moniker    string
 	Port       string
 	ThsType    string
+
+	Round int
 }
 
 type Moniker_message struct {
@@ -54,3 +57,5 @@ type Keygen_Store struct {
 	V2 string
 	V3 string
 }
+
+var Current_Round int

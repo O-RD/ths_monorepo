@@ -8,14 +8,13 @@ import (
 	"github.com/libp2p/go-libp2p/core/network"
 )
 
-func Connection_Stream_listener(p *ths.P2P) {
+func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 	//fmt.Println("Got a new stream!")
 
 	p.Host.SetStreamHandler("ths_stream", func(s network.Stream) {
 		// log.Println("sender received new stream")
 
 		buf := bufio.NewReader(s)
-		//log.Println(s)
 		str, _ := buf.ReadBytes('\n')
 
 		bytes := []byte(str)
@@ -23,9 +22,14 @@ func Connection_Stream_listener(p *ths.P2P) {
 		json.Unmarshal(bytes, &message_receive)
 		l.Lock()
 		p.Peers = append(p.Peers, ths.THS{Id: s.Conn().RemotePeer(),
-			Moniker: message_receive.Moniker})
+			Moniker: message_receive.Moniker,
+			Round:   0,
+		})
 		l.Unlock()
-
+		added_peer <- ths.THS{Id: s.Conn().RemotePeer(),
+			Moniker: message_receive.Moniker,
+			Round:   0,
+		}
 		s.Close()
 	})
 
@@ -34,7 +38,7 @@ func Connection_Stream_listener(p *ths.P2P) {
 func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 	//fmt.Println("Got a new stream!")
 
-	p.Host.SetStreamHandler("ths_stream", func(s network.Stream) {
+	p.Host.SetStreamHandler("ths_stream_keygen", func(s network.Stream) {
 		// log.Println("sender received new stream")
 
 		buf := bufio.NewReader(s)
