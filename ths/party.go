@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"time"
 
 	"github.com/libp2p/go-libp2p"
 	crypto "github.com/libp2p/go-libp2p/core/crypto"
@@ -86,7 +85,7 @@ func Create_peer(p *P2P) {
 	//Setup listener
 
 	peerChan := initMDNS(p.Host, p.Port)
-	time.Sleep(time.Second * 5)
+	// time.Sleep(time.Second * 5)
 
 	for external_peer := range peerChan {
 		//log.Println(var_counter, *num_users)
