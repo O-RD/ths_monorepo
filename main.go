@@ -26,7 +26,7 @@ func start_keygen() {
 	}(p2p_ch)
 
 	party = <-p2p_ch
-	party.Port, _, party.Threshold, party.Party_Size, party.Moniker = Process_flags()
+	party.Topic, _, party.Threshold, party.Party_Size, party.Moniker = Process_flags()
 
 	//MDNS
 

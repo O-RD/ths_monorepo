@@ -36,8 +36,7 @@ func create_host() (host.Host, error) {
 	}
 
 	// 0.0.0.0 will listen on any interface device.
-	var port = rand.Intn(9999)
-
+	var port = rand.Intn(1000)
 	//
 	//50000-
 	// log.Println("Node Port- ", 0)
@@ -84,11 +83,11 @@ func Create_peer(p *P2P) {
 
 	//Setup listener
 
-	peerChan := initMDNS(p.Host, p.Port)
+	peerChan := initMDNS(p.Host, p.Topic)
 	// time.Sleep(time.Second * 5)
 
 	for external_peer := range peerChan {
-		//log.Println(var_counter, *num_users)
+
 		if external_peer.ID == p.Host.ID() {
 			continue
 		}
@@ -104,6 +103,10 @@ func Create_peer(p *P2P) {
 			}
 			b_message, _ := json.Marshal(message)
 			_, err = send_stream.Write(append(b_message, '\n'))
+			if err == nil {
+				p.Connectedparties += 1
+			}
+			fmt.Println("Sent to", external_peer.ID)
 
 		}
 

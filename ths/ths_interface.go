@@ -47,7 +47,7 @@ type P2P struct {
 	Threshold  int
 	Party_Size int
 	Moniker    string
-	Port       string
+	Topic      string
 	ThsType    string
 
 	Round int
