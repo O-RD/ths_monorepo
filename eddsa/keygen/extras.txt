@@ -12,3 +12,20 @@
 		// }
 
         	// wg.Wait()
+
+			//From create_peer(){
+				// break_flag := 0
+			// for {
+			// 	if break_flag == 1 {
+			// 		break
+			// 	}
+			// 	for i := 0; i < len(p.Peers); i++ {
+			// 		if p.Peers[i].Id == external_peer.ID {
+			// 			log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Moniker)
+
+			// 			break_flag = 1
+			// 		}
+			// 		time.Sleep(time.Second)
+			// 	}
+			// }
+			}

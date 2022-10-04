@@ -105,26 +105,8 @@ func Create_peer(p *P2P) {
 			}
 			b_message, _ := json.Marshal(message)
 			_, err = send_stream.Write(append(b_message, '\n'))
-			p.Connectedparties += 1
-			break_flag := 0
-			for {
-				if break_flag == 1 {
-					break
-				}
-				for i := 0; i < len(p.Peers); i++ {
-					if p.Peers[i].Id == external_peer.ID {
-						log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Moniker)
-
-						break_flag = 1
-					}
-					time.Sleep(time.Second)
-				}
-			}
 
 		}
-		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
-			time.Sleep(time.Second * 2)
-			break
-		}
+
 	}
 }
