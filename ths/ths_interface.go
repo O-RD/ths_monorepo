@@ -24,8 +24,8 @@ type Message struct {
 type Payload struct {
 	Sender       peer.ID
 	Type         int
-	Payload_name string
-	Payload      string
+	Payload_name string //"C1,C2,C3"
+	Payload      string //"drhdrhdrh,hdhdth,shsdthsdth"
 }
 type P2P struct {
 
@@ -37,6 +37,11 @@ type P2P struct {
 	Connectedparties int
 	ThisParty        int
 
+	//Used for indexing peers
+	Sorted_Peers []THS
+	My_Index     int
+
+	//Used for comms
 	send       chan Message
 	receive    chan Message
 	Threshold  int
@@ -58,4 +63,4 @@ type Keygen_Store struct {
 	V3 string
 }
 
-var Current_Round int
+// var Participants []THS

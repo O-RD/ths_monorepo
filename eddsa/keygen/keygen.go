@@ -18,8 +18,11 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 
 	go p2p.Send(send_chan)
 	time.Sleep(time.Second * 5)
-	for i := 0; i < len(p.Peers); i++ {
+	for i := 0; i < len(p.Sorted_Peers); i++ {
 
+		if i == p.My_Index {
+			continue
+		}
 		//if p.Peers[i].Id != p.Host.ID() -> Continue
 		send_chan <- ths.Message{From: *p,
 			Type:         1,
@@ -33,8 +36,11 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
-	for i := 0; i < len(p.Peers); i++ {
+	for i := 0; i < len(p.Sorted_Peers); i++ {
 
+		if i == p.My_Index {
+			continue
+		}
 		//if p.Peers[i].Id != p.Host.ID() -> Continue
 		send_chan <- ths.Message{From: *p,
 			Type:         2,

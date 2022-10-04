@@ -110,3 +110,30 @@ func Create_peer(p *P2P) {
 
 	}
 }
+
+func Sort_Peers(party *P2P) {
+
+	list_of_external := party.Peers
+	my_id := THS{
+		Id:      party.Host.ID(),
+		Moniker: party.Moniker,
+		Round:   0,
+	}
+	list_of_external = append(list_of_external, my_id)
+
+	//Bubble Sort peers
+	for i := 0; i < len(list_of_external)-1; i++ {
+		for j := 0; j < len(list_of_external)-i-1; j++ {
+			if list_of_external[j].Id.String() > list_of_external[j+1].Id.String() {
+				list_of_external[j], list_of_external[j+1] = list_of_external[j+1], list_of_external[j]
+			}
+		}
+	}
+	for i := 0; i < len(list_of_external); i++ {
+		if list_of_external[i].Id == party.Host.ID() {
+			party.My_Index = i
+		}
+	}
+	party.Sorted_Peers = list_of_external
+	fmt.Println(party.My_Index, party.Sorted_Peers)
+}

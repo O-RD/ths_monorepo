@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/O-RD/ths_monorepo/eddsa/keygen"
 	"github.com/O-RD/ths_monorepo/p2p"
 	"github.com/O-RD/ths_monorepo/ths"
@@ -32,8 +34,10 @@ func start_keygen() {
 	var receiver_ch = make(chan ths.Payload)
 	//add channel)
 	p2p.Create_Peer(&party)
-
-	// ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
+	time.Sleep(time.Second * 2)
+	ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
 
 	keygen.Start(send_chan, &party, receiver_ch)
 }
+
+// -> Moniker+"_"+Peer_Id
