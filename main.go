@@ -26,7 +26,7 @@ func start_keygen() {
 	}(p2p_ch)
 
 	party = <-p2p_ch
-	party.Port, _, party.Threshold, party.Party_Size, party.Moniker = Process_flags() //Adds port number to p2p struct
+	party.Port, _, party.Threshold, party.Party_Size, party.Moniker = Process_flags()
 
 	//MDNS
 
@@ -34,10 +34,8 @@ func start_keygen() {
 	var receiver_ch = make(chan ths.Payload)
 	//add channel)
 	p2p.Create_Peer(&party)
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second)
 	ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
 
 	keygen.Start(send_chan, &party, receiver_ch)
 }
-
-// -> Moniker+"_"+Peer_Id

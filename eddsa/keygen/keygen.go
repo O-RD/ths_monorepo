@@ -17,7 +17,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//Add another channel to listener to agree to move ahead
 
 	go p2p.Send(send_chan)
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 2)
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {
@@ -26,7 +26,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		//if p.Peers[i].Id != p.Host.ID() -> Continue
 		send_chan <- ths.Message{From: *p,
 			Type:         1,
-			To:           p.Peers[i].Id,
+			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "First",
 			Payload:      "Test",
 			End:          0}
@@ -44,7 +44,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		//if p.Peers[i].Id != p.Host.ID() -> Continue
 		send_chan <- ths.Message{From: *p,
 			Type:         2,
-			To:           p.Peers[i].Id,
+			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "Second",
 			Payload:      "Test2",
 			End:          0}
