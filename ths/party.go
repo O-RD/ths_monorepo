@@ -97,7 +97,6 @@ func Create_peer(p *P2P) {
 				continue
 			}
 
-			log.Println("Found peer:", external_peer, ", connecting")
 			if err := p.Host.Connect(p.Ctx, external_peer); err != nil {
 				log.Println("Connection failed:", external_peer.ID)
 			} else {
