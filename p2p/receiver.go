@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -36,17 +37,21 @@ func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 			s.Close()
 
 			//Send Conn request if not sent prior
-
-			send_stream, _ := p.Host.NewStream(p.Ctx, s.Conn().RemotePeer(), "ths_stream")
-			message := ths.Moniker_message{
-				Moniker: p.Moniker,
+			x, _ := peer.AddrInfoFromP2pAddr(s.Conn().RemoteMultiaddr())
+			if err := p.Host.Connect(p.Ctx, *x); err != nil {
+				log.Println("Connection failed:", s.Conn().RemotePeer())
+			} else {
+				send_stream, _ := p.Host.NewStream(p.Ctx, s.Conn().RemotePeer(), "ths_stream")
+				message := ths.Moniker_message{
+					Moniker: p.Moniker,
+				}
+				b_message, _ := json.Marshal(message)
+				_, err := send_stream.Write(append(b_message, '\n'))
+				if err == nil {
+					p.Connectedparties += 1
+				}
+				fmt.Println("Sent to", s.Conn().RemotePeer())
 			}
-			b_message, _ := json.Marshal(message)
-			_, err := send_stream.Write(append(b_message, '\n'))
-			if err == nil {
-				p.Connectedparties += 1
-			}
-			fmt.Println("Sent to", s.Conn().RemotePeer())
 		}
 	})
 
