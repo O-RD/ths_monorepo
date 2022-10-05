@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"sync"
 
 	"github.com/libp2p/go-libp2p"
 	crypto "github.com/libp2p/go-libp2p/core/crypto"
@@ -86,31 +87,36 @@ func Create_peer(p *P2P) {
 	peerChan := initMDNS(p.Host, p.Topic)
 	// time.Sleep(time.Second * 5)
 
-	for external_peer := range peerChan {
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for external_peer := range peerChan {
 
-		if external_peer.ID == p.Host.ID() {
-			continue
-		}
-
-		// log.Println("Found peer:", external_peer, ", connecting")
-		if err := p.Host.Connect(p.Ctx, external_peer); err != nil {
-			log.Println("Connection failed:", external_peer.ID)
-		} else {
-
-			send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "ths_stream")
-			message := Moniker_message{
-				Moniker: p.Moniker,
+			if external_peer.ID == p.Host.ID() {
+				continue
 			}
-			b_message, _ := json.Marshal(message)
-			_, err = send_stream.Write(append(b_message, '\n'))
-			if err == nil {
-				p.Connectedparties += 1
+
+			// log.Println("Found peer:", external_peer, ", connecting")
+			if err := p.Host.Connect(p.Ctx, external_peer); err != nil {
+				log.Println("Connection failed:", external_peer.ID)
+			} else {
+
+				send_stream, _ := p.Host.NewStream(p.Ctx, external_peer.ID, "ths_stream")
+				message := Moniker_message{
+					Moniker: p.Moniker,
+				}
+				b_message, _ := json.Marshal(message)
+				_, err = send_stream.Write(append(b_message, '\n'))
+				if err == nil {
+					p.Connectedparties += 1
+				}
+				fmt.Println("Sent to", external_peer.ID)
+
 			}
-			fmt.Println("Sent to", external_peer.ID)
-
 		}
-
-	}
+	}()
+	wg.Wait()
 }
 
 func Sort_Peers(party *P2P) {
