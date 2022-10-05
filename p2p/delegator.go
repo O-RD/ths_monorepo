@@ -26,6 +26,7 @@ func Create_Peer(p *ths.P2P) {
 				time.Sleep(time.Second * 5)
 				break
 			}
+			time.Sleep(time.Second * 5)
 		}
 	}()
 }
