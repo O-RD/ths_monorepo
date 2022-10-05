@@ -15,8 +15,8 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	p.Round = 1
 	go Run_listener(p, receive_chan, proceed_chan)
 	//Add another channel to listener to agree to move ahead
-
-	go p2p.Send(send_chan)
+	send_proceed := make(chan int)
+	go p2p.Send(send_chan, send_proceed)
 	time.Sleep(time.Second * 3)
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
@@ -30,7 +30,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Payload_name: "First",
 			Payload:      "Test",
 			End:          0}
-
+		<-send_proceed
 	}
 	<-proceed_chan
 	//compute after round and proceed - replaces wait_until()
@@ -48,7 +48,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Payload_name: "Second",
 			Payload:      "Test2",
 			End:          0}
-
+		<-send_proceed
 	}
 	<-proceed_chan
 }

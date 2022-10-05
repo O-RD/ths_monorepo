@@ -3,7 +3,6 @@ package p2p
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
@@ -51,7 +50,7 @@ func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 				if err == nil {
 					p.Connectedparties += 1
 				}
-				fmt.Println("Sent to", s.Conn().RemotePeer())
+				// fmt.Println("Sent to", s.Conn().RemotePeer())
 			}
 		} else {
 			added_peer <- ths.THS{}

@@ -8,7 +8,7 @@ import (
 	ths "github.com/O-RD/ths_monorepo/ths"
 )
 
-func Send(message_channel chan ths.Message) {
+func Send(message_channel chan ths.Message, send_proceed chan int) {
 
 	for {
 		var message_data ths.Message
@@ -39,6 +39,6 @@ func Send(message_channel chan ths.Message) {
 		// if message_data.End == 1 {
 		// 	return
 		// }
-
+		send_proceed <- 1
 	}
 }

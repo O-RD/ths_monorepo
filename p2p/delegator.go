@@ -14,7 +14,7 @@ func Create_Peer(p *ths.P2P) {
 	time.Sleep(time.Second * 3)
 	go ths.Create_peer(p)
 	for {
-		fmt.Println("Recieved", <-addedpeer)
+		<-addedpeer
 		time.Sleep(time.Second * 3)
 		fmt.Println(p.Connectedparties, p.Party_Size-1, len(p.Peers))
 		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
