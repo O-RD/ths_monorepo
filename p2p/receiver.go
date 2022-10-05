@@ -30,11 +30,11 @@ func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 				Round:   0,
 			})
 			l.Unlock()
+			s.Close()
 			added_peer <- ths.THS{Id: s.Conn().RemotePeer(),
 				Moniker: message_receive.Moniker,
 				Round:   0,
 			}
-			s.Close()
 
 			//Send Conn request if not sent prior
 			s.Conn().RemoteMultiaddr()
