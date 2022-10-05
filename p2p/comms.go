@@ -57,7 +57,6 @@ func Send_Ack(p *ths.P2P, ack_message chan int) {
 
 				if err != nil {
 					fmt.Println(err)
-					time.Sleep(time.Millisecond)
 				} else {
 					break Inner
 				}
