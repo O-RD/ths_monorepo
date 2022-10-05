@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -101,6 +102,13 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 		var message_receive int
 		json.Unmarshal(bytes, &message_receive)
 		fmt.Println("Received", message_receive, "from", s.Conn().RemotePeer)
+		for {
+			if p.Round < message_receive {
+				time.Sleep(time.Millisecond)
+			} else {
+				break
+			}
+		}
 		if message_receive == 1 {
 
 			for i := 0; i < len(p.Round1); i++ {
