@@ -8,7 +8,7 @@ import (
 	ths "github.com/O-RD/ths_monorepo/ths"
 )
 
-func Send(message_channel chan ths.Message, send_proceed chan int) {
+func Send(message_channel chan ths.Message) {
 
 	for {
 		var message_data ths.Message
@@ -39,6 +39,29 @@ func Send(message_channel chan ths.Message, send_proceed chan int) {
 		// if message_data.End == 1 {
 		// 	return
 		// }
-		send_proceed <- 1
+
+	}
+}
+
+func Send_Ack(p *ths.P2P, ack_message chan int) {
+	for {
+		send := <-ack_message
+
+		for i := 0; i < len(p.Peers); i++ {
+			send_stream, _ := p.Host.NewStream(p.Ctx, p.Peers[i].Id, "ths_stream_ack")
+			message := send
+			b_message, _ := json.Marshal(message)
+		Inner:
+			for {
+				_, err := send_stream.Write(append(b_message, '\n'))
+
+				if err != nil {
+					fmt.Println(err)
+					time.Sleep(time.Millisecond)
+				} else {
+					break Inner
+				}
+			}
+		}
 	}
 }

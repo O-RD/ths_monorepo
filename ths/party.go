@@ -110,7 +110,7 @@ func Create_peer(p *P2P) {
 				// if err == nil {
 
 				// }
-				fmt.Println("Sent to", external_peer.ID)
+				// fmt.Println("Sent to", external_peer.ID)
 
 			}
 		}

@@ -19,7 +19,7 @@ type Message struct {
 	Type         int
 	Payload_name string
 	Payload      string
-	End          int
+	Status       int
 }
 type Payload struct {
 	Sender       peer.ID
@@ -53,6 +53,7 @@ type P2P struct {
 	Round int
 
 	Round1 []Keygen_Store_Round1
+
 	Round2 []Keygen_Store_Round2
 }
 
@@ -61,12 +62,14 @@ type Moniker_message struct {
 }
 
 type Keygen_Store_Round1 struct {
-	Id peer.ID
-	V1 string
+	Id  peer.ID
+	V1  string
+	Ack int
 }
 type Keygen_Store_Round2 struct {
-	Id peer.ID
-	V1 string
+	Id  peer.ID
+	V1  string
+	Ack int
 }
 
 // var Participants []THS

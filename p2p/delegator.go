@@ -1,7 +1,6 @@
 package p2p
 
 import (
-	"fmt"
 	"time"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
@@ -16,10 +15,10 @@ func Create_Peer(p *ths.P2P) {
 	for {
 		<-addedpeer
 		time.Sleep(time.Second * 3)
-		fmt.Println(p.Connectedparties, p.Party_Size-1, len(p.Peers))
+		// fmt.Println(p.Connectedparties, p.Party_Size-1, len(p.Peers))
 		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
 
-			time.Sleep(time.Second * 5)
+			// time.Sleep(time.Second * 5)
 			break
 		}
 	}
