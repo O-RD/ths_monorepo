@@ -13,20 +13,14 @@ func Create_Peer(p *ths.P2P) {
 	Connection_Stream_listener(p, addedpeer)
 	time.Sleep(time.Second * 3)
 	go ths.Create_peer(p)
-	go func() {
-		for {
-			fmt.Println("Recieved", <-addedpeer)
-		}
-	}()
-	go func() {
-		for {
-			fmt.Println(p.Connectedparties, p.Party_Size-1, len(p.Peers))
-			if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
+	for {
+		fmt.Println("Recieved", <-addedpeer)
 
-				time.Sleep(time.Second * 5)
-				break
-			}
+		// fmt.Println(p.Connectedparties, p.Party_Size-1, len(p.Peers))
+		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
+
 			time.Sleep(time.Second * 5)
+			break
 		}
-	}()
+	}
 }

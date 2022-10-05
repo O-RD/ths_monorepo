@@ -53,6 +53,8 @@ func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 				}
 				fmt.Println("Sent to", s.Conn().RemotePeer())
 			}
+		} else {
+			added_peer <- ths.THS{}
 		}
 	})
 
