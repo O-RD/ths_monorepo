@@ -46,6 +46,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	}
 	for {
 		if <-proceed_chan == 1 {
+			fmt.Println("Break")
 			break
 		}
 	}
