@@ -41,14 +41,16 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Ack_sender <- 1
 			break
 		}
-		time.Sleep(time.Millisecond)
+		//time.Sleep(time.Millisecond)
 	}
 	for {
 		if <-proceed_chan == 1 {
 			break
 		}
 	}
+
 	fmt.Println("End of Round 1")
+	time.Sleep(time.Second * 10)
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
