@@ -82,9 +82,9 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		bytes := []byte(str)
 		var message_receive ths.Payload
 		json.Unmarshal(bytes, &message_receive)
-
-		receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
-
+		if contains(p.Peers, s.Conn().RemotePeer()) == false {
+			receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+		}
 	})
 
 }
