@@ -74,6 +74,13 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		bytes := []byte(str)
 		var message_receive ths.Payload
 		json.Unmarshal(bytes, &message_receive)
+		for {
+			if p.Round < message_receive.Type {
+				time.Sleep(time.Millisecond)
+			} else {
+				break
+			}
+		}
 		if message_receive.Type == 1 {
 
 			if containsR1(p.Round1, s.Conn().RemotePeer()) == false {
