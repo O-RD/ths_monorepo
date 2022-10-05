@@ -108,6 +108,7 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 			}
 			if len(p.Round1) == len(p.Peers) && AckR1(p.Round1) {
 				// p.Round1[0].Ack = 0
+
 				proceed <- 1
 			}
 
@@ -119,6 +120,7 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 			}
 			if len(p.Round2) == len(p.Peers) && AckR2(p.Round2) {
 				// p.Round2[0].Ack = 0
+
 				proceed <- 2
 			}
 		}
