@@ -37,7 +37,8 @@ func Connection_Stream_listener(p *ths.P2P, added_peer chan ths.THS) {
 			s.Close()
 
 			//Send Conn request if not sent prior
-			x, _ := peer.AddrInfoFromP2pAddr(s.Conn().RemoteMultiaddr())
+			s.Conn().RemoteMultiaddr()
+			x, _ := peer.AddrInfoFromString(s.Conn().RemoteMultiaddr().String() + "/p2p/" + s.Conn().RemotePeer().String())
 			if err := p.Host.Connect(p.Ctx, *x); err != nil {
 				log.Println("Connection failed:", s.Conn().RemotePeer())
 			} else {
