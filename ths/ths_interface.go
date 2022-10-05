@@ -51,16 +51,22 @@ type P2P struct {
 	ThsType    string
 
 	Round int
+
+	Round1 []Keygen_Store_Round1
+	Round2 []Keygen_Store_Round2
 }
 
 type Moniker_message struct {
 	Moniker string
 }
 
-type Keygen_Store struct {
+type Keygen_Store_Round1 struct {
+	Id peer.ID
 	V1 string
-	V2 string
-	V3 string
+}
+type Keygen_Store_Round2 struct {
+	Id peer.ID
+	V1 string
 }
 
 // var Participants []THS

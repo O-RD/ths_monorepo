@@ -13,6 +13,15 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int) {
 	for {
 		// Figure how to store - use
 		temp := <-receive_chan
+		if temp.Type == 1 {
+			p.Round1 = append(p.Round1, ths.Keygen_Store_Round1{Id: temp.Sender,
+				V1: temp.Payload,
+			})
+		} else if temp.Type == 2 {
+			p.Round2 = append(p.Round2, ths.Keygen_Store_Round2{Id: temp.Sender,
+				V1: temp.Payload,
+			})
+		}
 		fmt.Println(temp)
 		var flag = 0
 		for i := 0; i < len(p.Peers); i++ {

@@ -69,6 +69,25 @@ func contains(peers []ths.THS, peer_id peer.ID) bool {
 	return false
 }
 
+func containsR1(peers []ths.Keygen_Store_Round1, peer_id peer.ID) bool {
+	for _, v := range peers {
+		if v.Id == peer_id {
+			return true
+		}
+	}
+
+	return false
+}
+
+func containsR2(peers []ths.Keygen_Store_Round2, peer_id peer.ID) bool {
+	for _, v := range peers {
+		if v.Id == peer_id {
+			return true
+		}
+	}
+
+	return false
+}
 func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 	//fmt.Println("Got a new stream!")
 
@@ -82,9 +101,17 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		bytes := []byte(str)
 		var message_receive ths.Payload
 		json.Unmarshal(bytes, &message_receive)
-		if contains(p.Peers, s.Conn().RemotePeer()) == false {
-			receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+		if message_receive.Type == 1 {
+
+			if containsR1(p.Round1, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+			}
+		} else if message_receive.Type == 2 {
+			if containsR2(p.Round2, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+			}
 		}
+
 	})
 
 }
