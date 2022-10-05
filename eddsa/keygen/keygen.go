@@ -17,7 +17,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//Add another channel to listener to agree to move ahead
 
 	go p2p.Send(send_chan)
-	time.Sleep(time.Second * 2)
+	time.Sleep(time.Second * 3)
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {
