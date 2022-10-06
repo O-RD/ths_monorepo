@@ -108,7 +108,6 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 		bytes := []byte(str)
 		var message_receive int
 		json.Unmarshal(bytes, &message_receive)
-		fmt.Println("Received", message_receive, "from", s.Conn().RemotePeer())
 
 		if message_receive == 1 {
 			for {
@@ -128,7 +127,7 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 			fmt.Println(len(p.Round1), len(p.Peers), AckR1(p.Round1))
 			if len(p.Round1) == len(p.Peers) && AckR1(p.Round1) {
 				// p.Round1[0].Ack = 0
-				fmt.Println("End")
+
 				proceed <- 1
 			}
 

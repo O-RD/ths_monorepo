@@ -38,7 +38,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	}
 	for {
 		if len(p.Round1) == len(p.Peers) {
-			fmt.Println("Sending Ack")
+
 			Ack_sender <- 1
 			break
 		}
@@ -46,13 +46,13 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	}
 	for {
 		if <-proceed_chan == 1 {
-			fmt.Println("Break")
+
 			break
 		}
 	}
 
 	fmt.Println("End of Round 1")
-	time.Sleep(time.Second * 10)
+	// time.Sleep(time.Second * 10)
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
@@ -83,5 +83,5 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		}
 	}
 	fmt.Println("End of Round 2")
-	time.Sleep(time.Second * 10)
+	// time.Sleep(time.Second * 10)
 }
