@@ -2,6 +2,8 @@ package keygen
 
 import (
 	"fmt"
+	"os"
+	"strconv"
 
 	"github.com/O-RD/ths_monorepo/p2p"
 	"github.com/O-RD/ths_monorepo/ths"
@@ -21,6 +23,21 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 				V1:  temp.Payload,
 				Ack: 0,
 			})
+			x := fmt.Sprintf("%x", temp.Payload.Keygen_Data.EPK.ToAffineCompressed())
+			fmt.Println("EPK:", x)
+			Sender_index := p2p.GetIndex(p.Sorted_Peers, temp.Sender)
+			fmt.Println("Sender:", Sender_index)
+
+			err1 := os.MkdirAll("Broadcast/"+strconv.Itoa(Sender_index), os.ModePerm)
+			if err1 != nil {
+				fmt.Println("Error")
+			}
+			_f, err := os.OpenFile("Broadcast/"+strconv.Itoa(Sender_index)+"/EPK.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+			if err != nil {
+				fmt.Println("ERROR:")
+			}
+
+			_f.WriteString(x)
 
 			// if len(p.Round1) == len(p.Peers) {
 			// 	Ack_sender <- 1

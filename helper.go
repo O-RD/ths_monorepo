@@ -12,7 +12,7 @@ func Process_flags() (string, string, int, int, string) {
 	var topic = *flag.String("topic", "KEYGEN", "channel id for connecting")
 	var version = *flag.String("v", "t1", "Type of run") //
 	var threshold = *flag.Int("t", 2, "Threshold")
-	var party_size = *flag.Int("n", 3, "N value")
+	var party_size = *flag.Int("n", 2, "N value")
 	var moniker = *flag.String("m", "Default_Name", "Moniker")
 	flag.Parse()
 

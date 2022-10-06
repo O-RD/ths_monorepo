@@ -6,6 +6,7 @@ import (
 
 	"github.com/O-RD/ths_monorepo/p2p"
 	"github.com/O-RD/ths_monorepo/ths"
+	"gopkg.in/dedis/kyber.v2/group/edwards25519"
 )
 
 func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload) {
@@ -14,10 +15,21 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	proceed_chan := make(chan int)
 	Ack_sender := make(chan int)
 	p.Round = 1
-	go Run_listener(p, receive_chan, proceed_chan, Ack_sender)
-	//Add another channel to listener to agree to move ahead
+	Round_Values := ths.Keygen_Store{
+		Curve: edwards25519.NewBlakeSHA256Ed25519(),
+	}
 
+	Data := ths.Data{
+		Keygen_Data: Round_Values,
+	}
+
+	Round1(send_chan, p, receive_chan, &Data.Keygen_Data)
+	go Run_listener(p, receive_chan, proceed_chan, Ack_sender)
+
+	//Add another channel to listener to agree to move ahead
 	go p2p.Send(send_chan)
+	// fmt.Printf("EPK:%x\n", Data.Keygen_Data.EPK.ToAffineCompressed())
+
 	fmt.Println("Initiate Keygen")
 	fmt.Println("Starting Round 1")
 	time.Sleep(time.Second * 3)
@@ -32,7 +44,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         1,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "First",
-			Payload:      "Test",
+			Payload:      Data,
 			Status:       0}
 
 	}
@@ -56,6 +68,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
+	Round2(send_chan, p, receive_chan, &Round_Values)
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {
@@ -66,7 +79,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         2,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "Second",
-			Payload:      "Test2",
+			Payload:      Data,
 			Status:       0}
 
 	}
