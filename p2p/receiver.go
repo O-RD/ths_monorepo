@@ -108,13 +108,14 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 		bytes := []byte(str)
 		var message_receive int
 		json.Unmarshal(bytes, &message_receive)
-		fmt.Println("Received", message_receive, "from", s.Conn().RemotePeer)
+		fmt.Println("Received", message_receive, "from", s.Conn().RemotePeer())
 
 		if message_receive == 1 {
 
 			for i := 0; i < len(p.Round1); i++ {
 				if p.Round1[i].Id == s.Conn().RemotePeer() {
 					p.Round1[i].Ack = 1
+					time.Sleep(time.Millisecond * 2)
 				}
 			}
 			fmt.Println(len(p.Round1), len(p.Peers), AckR1(p.Round1))
