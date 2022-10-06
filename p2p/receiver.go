@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/libp2p/go-libp2p/core/network"
@@ -73,6 +74,13 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		bytes := []byte(str)
 		var message_receive ths.Payload
 		json.Unmarshal(bytes, &message_receive)
+		for {
+			if message_receive.Type > p.Round {
+				time.Sleep(time.Millisecond)
+			} else {
+				break
+			}
+		}
 		if message_receive.Type == 1 {
 
 			if containsR1(p.Round1, s.Conn().RemotePeer()) == false {

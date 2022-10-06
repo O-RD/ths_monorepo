@@ -1,6 +1,8 @@
 package p2p
 
 import (
+	"fmt"
+
 	ths "github.com/O-RD/ths_monorepo/ths"
 	"github.com/libp2p/go-libp2p/core/peer"
 )
@@ -36,7 +38,7 @@ func containsR2(peers []ths.Keygen_Store_Round2, peer_id peer.ID) bool {
 }
 
 func AckR1(peers []ths.Keygen_Store_Round1) bool {
-	// fmt.Println("First Ack-", peers)
+	fmt.Println("First Ack-", peers)
 	for _, v := range peers {
 
 		if v.Ack == 0 {
