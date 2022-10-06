@@ -20,7 +20,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	go p2p.Send(send_chan)
 	fmt.Println("Initiate Keygen")
 	fmt.Println("Starting Round 1")
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 10)
 
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
