@@ -6,7 +6,6 @@ import (
 
 	"github.com/O-RD/ths_monorepo/p2p"
 	"github.com/O-RD/ths_monorepo/ths"
-	"gopkg.in/dedis/kyber.v2/group/edwards25519"
 )
 
 func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload) {
@@ -15,19 +14,30 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	proceed_chan := make(chan int)
 	Ack_sender := make(chan int)
 	p.Round = 1
-	Round_Values := ths.Keygen_Store{
-		Curve: edwards25519.NewBlakeSHA256Ed25519(),
-	}
+	go Run_listener(p, receive_chan, proceed_chan, Ack_sender)
+	go p2p.Send(send_chan)
+
+	Round_Values := Fill_default_Keygen()
 
 	Data := ths.Data{
 		Keygen_Data: Round_Values,
+		Sign_Data:   "nil",
 	}
 
 	Round1(send_chan, p, receive_chan, &Data.Keygen_Data)
-	go Run_listener(p, receive_chan, proceed_chan, Ack_sender)
+
+	Round1_Values:=ths.Round_Data{
+		Keygen: ths.Keygen_Data{
+			EPK             :Data.Keygen_All_Data.EPK, //curves.Point
+			SPK             :Data.Keygen_All_Data.SPK, //kyber.Point
+			KGC              :Data.Keygen_All_Data.KGC,          
+			Encrypted_Shares :[]Encrypted_Share
+		}
+	}
+
+	// fmt.Println("AFTER ROUND1:", Data.Keygen_Data)
 
 	//Add another channel to listener to agree to move ahead
-	go p2p.Send(send_chan)
 	// fmt.Printf("EPK:%x\n", Data.Keygen_Data.EPK.ToAffineCompressed())
 
 	fmt.Println("Initiate Keygen")
@@ -44,7 +54,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         1,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "First",
-			Payload:      Data,
+			Payload:      ,
 			Status:       0}
 
 	}

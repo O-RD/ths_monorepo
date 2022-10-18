@@ -74,6 +74,7 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		bytes := []byte(str)
 		var message_receive ths.Payload
 		json.Unmarshal(bytes, &message_receive)
+		fmt.Println(message_receive)
 		for {
 			if message_receive.Type > p.Round {
 				time.Sleep(time.Millisecond)
@@ -84,6 +85,7 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		if message_receive.Type == 1 {
 
 			if containsR1(p.Round1, s.Conn().RemotePeer()) == false {
+				// fmt.Println("INSIDE RECEIVER:", message_receive.Payload)
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
 
 			}

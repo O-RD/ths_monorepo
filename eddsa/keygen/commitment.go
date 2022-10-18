@@ -129,10 +129,10 @@ func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.
 	}
 	encoding.WriteHexPoint(curve, f4, sig.R)
 
-	value_struct.KGC.Sign = sig.S
+	value_struct.KGC.Sign, _ = encoding.ScalarToStringHex(curve, sig.S)
 	value_struct.KGC.Message = m
-	value_struct.KGC.Public_key = publicKey
-	value_struct.KGC.KGD = sig.R
+	value_struct.KGC.Public_key, _ = encoding.PointToStringHex(curve, publicKey)
+	value_struct.KGC.KGD, _ = encoding.PointToStringHex(curve, sig.R)
 
 	fmt.Printf("Commitment Done for Peer %s \n", peer_number)
 }

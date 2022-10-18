@@ -8,7 +8,6 @@ import (
 	"gopkg.in/dedis/kyber.v2"
 
 	"github.com/coinbase/kryptology/pkg/core/curves"
-	"gopkg.in/dedis/kyber.v2/group/edwards25519"
 )
 
 type THS struct {
@@ -27,21 +26,25 @@ type Message struct {
 	To           peer.ID
 	Type         int
 	Payload_name string
-	Payload      Data
+	Payload      Round_Data
 	Status       int
 }
 
 type Data struct {
-	Keygen_Data Keygen_Store
-	Sign_Data   string
+	Keygen_All_Data Keygen_Store
+	Sign_All_Data   string
 }
 
+//Contains Data to be broadcasted
+type Round_Data struct {
+	Keygen Keygen_Data
+}
 type Payload struct {
 	Sender peer.ID
 	// Sender       string
 	Type         int
-	Payload_name string //"C1,C2,C3"
-	Payload      Data   //"drhdrhdrh,hdhdth,shsdthsdth"
+	Payload_name string     //"C1,C2,C3"
+	Payload      Round_Data //"drhdrhdrh,hdhdth,shsdthsdth"
 }
 
 type P2P struct {
@@ -78,14 +81,22 @@ type Moniker_message struct {
 	Moniker string
 }
 
-type Keygen_Store struct {
-	Curve            *edwards25519.SuiteEd25519
-	EPK              curves.Point
-	ESK              curves.Scalar
-	SSK              kyber.Scalar
-	SPK              kyber.Point
+//THe Data to be Broadcasted
+type Keygen_Data struct {
+	EPK              string //curves.Point
+	SPK              string //kyber.Point
 	KGC              KGC
-	Alphas           []kyber.Point
+	Alphas           []string
+	Encrypted_Shares []Encrypted_Share
+}
+
+type Keygen_Store struct {
+	EPK              string //curves.Point
+	ESK              string //curves.Scalar
+	SSK              string //kyber.Scalar
+	SPK              string //kyber.Point
+	KGC              KGC
+	Alphas           []string
 	Encrypted_Shares []Encrypted_Share
 	V2               string
 	V3               string
@@ -98,20 +109,20 @@ type Encrypted_Share struct {
 }
 
 type KGC struct {
-	Sign       kyber.Scalar
-	Public_key kyber.Point
+	Sign       string //kyber.Scalar
+	Public_key string //kyber.Point
 	Message    string
-	KGD        kyber.Point
+	KGD        string //kyber.Point
 }
 
 type Keygen_Store_Round1 struct {
 	Id  peer.ID
-	V1  Data
+	V1  Round_Data
 	Ack int
 }
 type Keygen_Store_Round2 struct {
 	Id  peer.ID
-	V1  Data
+	V1  Round_Data
 	Ack int
 }
 
