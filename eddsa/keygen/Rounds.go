@@ -11,6 +11,7 @@ import (
 	"github.com/O-RD/ths_monorepo/ths"
 	"gopkg.in/dedis/kyber.v2"
 	"gopkg.in/dedis/kyber.v2/util/encoding"
+	Encode "gopkg.in/dedis/kyber.v2/util/encoding"
 )
 
 func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round1_Values *ths.Keygen_Store) {
@@ -37,8 +38,8 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// Generation of Elgamal Keys
 	ESK, EPK := Elgamal_KeyGen()
 
-	Round1_Values.EPK = EPK
-	Round1_Values.ESK = ESK
+	Round1_Values.EPK = fmt.Sprintf("%x", EPK.ToAffineCompressed())
+	Round1_Values.ESK = string(ESK.Bytes())
 
 	fmt.Println(" \n ")
 	fmt.Println("Elgamal Public Key:")
@@ -55,15 +56,13 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	fmt.Println(SSK)
 	fmt.Printf("\n")
 
-	Round1_Values.SSK = SSK
-	Round1_Values.SPK = SPK
+	Round1_Values.SSK, _ = Encode.ScalarToStringHex(curve, SSK)
+	Round1_Values.SPK, _ = Encode.PointToStringHex(curve, SPK)
 
 	//storing the schnorr secret key to Prvate Folder
 
 	//commiting SSK
 	Commitment(SSK, "hello world", peer_number, Round1_Values)
-
-	fmt.Println("AFTER ROUND 1:", Round1_Values.KGC.Message)
 
 }
 
@@ -96,12 +95,13 @@ func Round2(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	}
 
 	// to generate coefficients of the polynomial
-	Generate_Polynomial_coefficients(T, poly, peer_number, Round2_Values.SSK, "vss/"+peer_number)
+	SSK, _ := Encode.StringHexToScalar(curve, Round2_Values.SSK)
+	Generate_Polynomial_coefficients(T, poly, peer_number, SSK, "vss/"+peer_number)
 	// Generating the shares and storing in share array
 	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/"+peer_number)
 	//Generating Alphas
 	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
-	Round2_Values.Alphas = alphas
+	// Round2_Values.Alphas = alphas
 
 }
 
