@@ -173,7 +173,7 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		//Ecryption using( current peer's Secret key,current peer's public key, ith users(receivers) public key)
 		C1, C2, C3, _ := AuthEncryption(toEncrypt, Sender_ESK, Sender_EPK, EPK_receiver)
 		encrypted := ths.Encrypted_Share{
-			C1: C1,
+			C1: string(C1.ToAffineCompressed()),
 			C2: C2,
 			C3: C3,
 		}

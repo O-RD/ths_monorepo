@@ -20,19 +20,20 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	Round_Values := Fill_default_Keygen()
 
 	Data := ths.Data{
-		Keygen_Data: Round_Values,
-		Sign_Data:   "nil",
+		Keygen_All_Data: Round_Values,
+		Sign_All_Data:   "nil",
 	}
 
-	Round1(send_chan, p, receive_chan, &Data.Keygen_Data)
+	Round1(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 
-	Round1_Values:=ths.Round_Data{
+	Round1_Values := ths.Round_Data{
 		Keygen: ths.Keygen_Data{
-			EPK             :Data.Keygen_All_Data.EPK, //curves.Point
-			SPK             :Data.Keygen_All_Data.SPK, //kyber.Point
-			KGC              :Data.Keygen_All_Data.KGC,          
-			Encrypted_Shares :[]Encrypted_Share
-		}
+			EPK:        Data.Keygen_All_Data.EPK, //curves.Point
+			SPK:        Data.Keygen_All_Data.SPK, //kyber.Point
+			KGC:        Data.Keygen_All_Data.KGC,
+			Alphas:     []string{},
+			Enc_shares: []ths.Encrypted_Share{},
+		},
 	}
 
 	// fmt.Println("AFTER ROUND1:", Data.Keygen_Data)
@@ -54,7 +55,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         1,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "First",
-			Payload:      ,
+			Payload:      Round1_Values,
 			Status:       0}
 
 	}
@@ -89,7 +90,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         2,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "Second",
-			Payload:      Data,
+			Payload:      Round1_Values,
 			Status:       0}
 
 	}

@@ -6,8 +6,6 @@ import (
 	host "github.com/libp2p/go-libp2p/core/host"
 	peer "github.com/libp2p/go-libp2p/core/peer"
 	"gopkg.in/dedis/kyber.v2"
-
-	"github.com/coinbase/kryptology/pkg/core/curves"
 )
 
 type THS struct {
@@ -83,11 +81,11 @@ type Moniker_message struct {
 
 //THe Data to be Broadcasted
 type Keygen_Data struct {
-	EPK              string //curves.Point
-	SPK              string //kyber.Point
-	KGC              KGC
-	Alphas           []string
-	Encrypted_Shares []Encrypted_Share
+	EPK        string //curves.Point
+	SPK        string //kyber.Point
+	KGC        KGC
+	Alphas     []string
+	Enc_shares []Encrypted_Share
 }
 
 type Keygen_Store struct {
@@ -103,7 +101,7 @@ type Keygen_Store struct {
 }
 
 type Encrypted_Share struct {
-	C1 curves.Point
+	C1 string
 	C2 []byte
 	C3 []byte
 }
