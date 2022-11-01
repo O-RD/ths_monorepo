@@ -84,7 +84,8 @@ func Create_peer(p *P2P) {
 
 	//Setup listener
 
-	peerChan := initMDNS(p.Host, p.Topic)
+	// peerChan := initMDNS(p.Host, p.Topic)
+	peerChan := initDHT(p)
 	// time.Sleep(time.Second * 5)
 
 	var wg sync.WaitGroup
