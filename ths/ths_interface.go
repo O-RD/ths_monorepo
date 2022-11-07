@@ -55,6 +55,10 @@ type P2P struct {
 	Connectedparties int
 	ThisParty        int
 
+	//Required for Peer finding API
+	Host_ips []string
+	Host_id  string //peer.ID to []byte
+
 	//Used for indexing peers
 	Sorted_Peers []THS
 	My_Index     int

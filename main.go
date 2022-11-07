@@ -33,6 +33,7 @@ func start_keygen() {
 	var send_chan = make(chan ths.Message)
 	var receiver_ch = make(chan ths.Payload)
 	//add channel)
+	// ths.Find_peers_api(&party)
 	p2p.Create_Peer(&party)
 	time.Sleep(time.Second)
 	ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
