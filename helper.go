@@ -9,10 +9,10 @@ import (
 func Process_flags() (string, string, int, int, string) {
 
 	// strconv.Itoa(rand.Intn(99999-20000) + 20000)
-	var topic = *flag.String("topic", "KEYGEN6s", "channel id for connecting")
+	var topic = *flag.String("topic", "john2", "channel id for connecting")
 	var version = *flag.String("v", "t1", "Type of run") //
 	var threshold = *flag.Int("t", 2, "Threshold")
-	var party_size = *flag.Int("n", 3, "N value")
+	var party_size = *flag.Int("n", 2, "N value")
 	var moniker = *flag.String("m", "Default_Name", "Moniker")
 	flag.Parse()
 

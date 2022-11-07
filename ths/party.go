@@ -149,10 +149,10 @@ func Find_peers_api(p *P2P) {
 					log.Println(err)
 				}
 				if err := p.Host.Connect(p.Ctx, *connect_to); err != nil {
-					// log.Println("Connection failed:", peer_ip)
+					log.Println("Connection failed:", peer_ip)
 
 				} else {
-					// log.Println("Connected to: ", peer_ip)
+					log.Println("Connected to: ", peer_ip)
 					send_stream, _ := p.Host.NewStream(p.Ctx, connect_to.ID, "ths_stream")
 					message := Moniker_message{
 						Moniker: p.Moniker,
