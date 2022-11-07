@@ -1,0 +1,31 @@
+// var wg sync.WaitGroup
+	// go func(send_chan chan ths.Message) {
+	// 	wg.Add(1)
+	// 	defer wg.Done()
+	// 	p2p.Send(send_chan)
+	// }(send_chan)
+
+
+    	// var end int = 0
+		// if i == len(p.Peers)-1 {
+		// 	end = 1
+		// }
+
+        	// wg.Wait()
+
+			//From create_peer(){
+				// break_flag := 0
+			// for {
+			// 	if break_flag == 1 {
+			// 		break
+			// 	}
+			// 	for i := 0; i < len(p.Peers); i++ {
+			// 		if p.Peers[i].Id == external_peer.ID {
+			// 			log.Println("Connected to ", external_peer.ID, " with Moniker: ", p.Peers[i].Moniker)
+
+			// 			break_flag = 1
+			// 		}
+			// 		time.Sleep(time.Second)
+			// 	}
+			// }
+			}
