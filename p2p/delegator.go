@@ -11,7 +11,8 @@ func Create_Peer(p *ths.P2P) {
 	addedpeer := make(chan ths.THS)
 	Connection_Stream_listener(p, addedpeer)
 	time.Sleep(time.Second * 3)
-	go ths.Create_peer(p)
+	// go ths.Create_peer(p)
+	go ths.Find_peers_api(p)
 	for {
 		<-addedpeer
 		time.Sleep(time.Second * 3)

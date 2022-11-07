@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-core/peer"
 	crypto "github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
@@ -70,6 +73,10 @@ func P2p_init(p2p_chan chan P2P) {
 	p.Host = h
 	p.Host_ip = h.Addrs()[0].String() + "/p2p/" + h.ID().String()
 	p.Ctx = ctx
+	for i := 0; i < len(h.Addrs()); i++ {
+		p.Host_ips = append(p.Host_ips, h.Addrs()[i].String())
+	}
+	p.Host_id = h.ID().String()
 	// Create_peer(p)
 	p2p_chan <- p
 	close(p2p_chan)
@@ -79,12 +86,13 @@ func P2p_init(p2p_chan chan P2P) {
 var peer_details_list []string
 
 func Create_peer(p *P2P) {
-
+	// multiaddr.NewMultiaddr()
 	//a := get_list(h, *channel_id, ctx)
 
 	//Setup listener
 
 	peerChan := initMDNS(p.Host, p.Topic)
+	// peerChan := initDHT(p)
 	// time.Sleep(time.Second * 5)
 
 	var wg sync.WaitGroup
@@ -118,6 +126,52 @@ func Create_peer(p *P2P) {
 	wg.Wait()
 }
 
+func Find_peers_api(p *P2P) {
+	api_send(p)
+
+	for {
+		//Change logic of getting same list
+		time.Sleep(time.Second * 3)
+		api_data := api_get(p.Topic)
+		for i := range api_data {
+			// api_data[a].Ip
+			if api_data[i].Peer == p.Host_id {
+				continue
+			}
+			for j := range api_data[i].Ip {
+				if strings.HasPrefix(api_data[i].Ip[j], "127") {
+					continue
+				}
+				peer_ip := api_data[i].Ip[j] + "/p2p/" + api_data[i].Peer
+
+				connect_to, err := peer.AddrInfoFromString(peer_ip)
+				if err != nil {
+					log.Println(err)
+				}
+				if err := p.Host.Connect(p.Ctx, *connect_to); err != nil {
+					log.Println("Connection failed:", peer_ip)
+
+				} else {
+					log.Println("Connected to: ", peer_ip)
+					send_stream, _ := p.Host.NewStream(p.Ctx, connect_to.ID, "ths_stream")
+					message := Moniker_message{
+						Moniker: p.Moniker,
+					}
+					b_message, _ := json.Marshal(message)
+					_, _ = send_stream.Write(append(b_message, '\n'))
+					break
+				}
+			}
+
+		}
+		time.Sleep(time.Second * 3)
+		if len(p.Peers) >= p.Party_Size-1 && p.Connectedparties >= p.Party_Size-1 {
+
+			// time.Sleep(time.Second * 5)
+			break
+		}
+	}
+}
 func Sort_Peers(party *P2P) {
 
 	list_of_external := party.Peers
