@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <link rel="stylesheet" media="screen" href="../assets/css/style.css">
+                <script>
+                        function update_hidden(){
+                                document.getElementById("id2").value=document.getElementById("id1").value
+                        }
+                      
+                </script>
+        </head>
+
+        <body>
+                <div id="particles-js">
+                  
+                        <div class="text">
+                              
+
+
+                                <img src="../assets/image/logo.png" width=50px/>
+                                <h1>Welcome to Insaanity THS</h1><br>
+                                <h3>Please Enter Your Vault ID:</h3>
+                        
+                                <form method="POST" action="/dealer" >
+
+                                        <input type="text" onChange="update_hidden()" id="id1" name="vaultID"><br><br>
+                                        <button><input type="submit" value="Dealer" ></button>
+                                </form>
+                                <form method="POST" action="/nondealer">
+                                        <input type="hidden" id="id2" name="vaultID2"><br><br>
+                                        <button><input type="submit" value="Non-Dealer"></button>
+                                </form>
+
+                        <br>
+                        </div>
+                </div>
+        
+                <script src="../assets/js/particles.js"></script>
+                <script src="../assets/js/app.js"></script>  
+                <script src="../assets/js/ths.js"></script>  
+        
+        </body>
+</html>
