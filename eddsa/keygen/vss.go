@@ -252,7 +252,7 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool, my_index i
 	if signing {
 		path = "Received/Signing/" + peer_number + "/Shares/share"
 	} else {
-		path = "Received/" + peer_number + "/Shares/share"
+		path = "Data/Keygen_shares/"
 	}
 	if signing {
 		path2 = "vss/Signing/" + peer_number + "/Indivisual_Share" + peer_number + ".txt"
@@ -281,7 +281,7 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool, my_index i
 
 		}
 
-		file, err := os.Open(path + strconv.Itoa(int(i)) + ".txt")
+		file, err := os.Open(path + "share" + strconv.Itoa(int(i)) + ".txt")
 		if err != nil {
 			panic(err)
 		}
@@ -362,7 +362,7 @@ func verify_each_share(peer_number string, peer_count int64, share []kyber.Scala
 		if signing {
 			path = "Broadcast/" + strconv.Itoa(int(i)) + "/Signing/Alphas/"
 		} else {
-			path = "Broadcast/" + strconv.Itoa(int(i)) + "/Alphas/"
+			path = "Received/" + strconv.Itoa(int(i)) + "/Keygen_alphas/"
 		}
 		alphas := []kyber.Point{} // to store alphas
 

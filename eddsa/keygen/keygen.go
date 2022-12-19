@@ -26,7 +26,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 
 	Round1(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 
-	Round1_Values := ths.Round_Data{
+	Values := ths.Round_Data{
 		Keygen: ths.Keygen_Data{
 			EPK:        Data.Keygen_All_Data.EPK, //curves.Point
 			SPK:        Data.Keygen_All_Data.SPK, //kyber.Point
@@ -55,7 +55,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         1,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "First",
-			Payload:      Round1_Values,
+			Payload:      Values,
 			Status:       0}
 
 	}
@@ -81,6 +81,11 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	fmt.Println("Starting Round 2")
 	Round2(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Round3(send_chan, p, receive_chan, &Data.Keygen_All_Data)
+
+	Values.Keygen.Alphas = Data.Keygen_All_Data.Alphas
+	fmt.Println("-->>", Values.Keygen.Alphas)
+	Values.Keygen.Enc_shares = Data.Keygen_All_Data.Encrypted_Shares
+
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {
@@ -91,7 +96,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Type:         2,
 			To:           p.Sorted_Peers[i].Id,
 			Payload_name: "Second",
-			Payload:      Round1_Values,
+			Payload:      Values,
 			Status:       0}
 
 	}
@@ -108,5 +113,6 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		}
 	}
 	fmt.Println("End of Round 2")
+
 	// time.Sleep(time.Second * 10)
 }

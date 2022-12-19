@@ -638,7 +638,7 @@ func Get_Group_Key(Peer_Count int64, my_index int) kyber.Point {
 			GK = GK.Add(GK, temp)
 			continue
 		}
-		path := "Broadcast/" + fmt.Sprint(i) + "/Alphas/alpha0.txt"
+		path := "Received/" + fmt.Sprint(i) + "/keygen_alphas/alpha0.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexPoint(curve, file)
 		GK = GK.Add(GK, temp)
