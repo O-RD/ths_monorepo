@@ -31,11 +31,8 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	var T int64 = int64(p.Threshold)
 	fmt.Println("THRESHOLD:", T)
 
-	// fmt.Scan(&choice)
 	time.Sleep(time.Second)
-	// fmt.Println(choice)
-	// switch choice {
-	// case 1:
+
 	time.Sleep(time.Second * 2)
 	// Generation of Elgamal Keys
 	ESK, EPK := Elgamal_KeyGen()
@@ -173,12 +170,6 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		elg_curve := Setup()
 		EPK_receiver, _ := elg_curve.Point.FromAffineCompressed(data)
 
-		// fmt.Println("Sender_ESK:", Sender_ESK)
-		// fmt.Println("Sender_EPK:", Sender_EPK)
-		// fmt.Println("EPK_receiver:", EPK_receiver)
-		//encoding.WriteHexScalar(curve, file, shares[i])
-		// toEncrypt, _ := encoding.ScalarToStringHex(curve, share)
-
 		//Share to encrypt(in string format)
 		toEncrypt := share.String()
 		fmt.Println("TO ENCRYPT:", toEncrypt)
@@ -240,10 +231,6 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		C1_Data, _ := ioutil.ReadFile("Received/" + fmt.Sprint(i) + "/Keygen_shares/C1.txt")
 		C2_Data, _ := ioutil.ReadFile("Received/" + fmt.Sprint(i) + "/Keygen_shares/C1.txt")
 		C3_Data, _ := ioutil.ReadFile("Received/" + fmt.Sprint(i) + "/Keygen_shares/C1.txt")
-
-		// C1_Data, _ := ioutil.ReadFile("C's/" + fmt.Sprint(i) + "/" + peer_number + "/C1.txt")
-		// C2_Data, _ := ioutil.ReadFile("C's/" + fmt.Sprint(i) + "/" + peer_number + "/C2.txt")
-		// C3_Data, _ := ioutil.ReadFile("C's/" + fmt.Sprint(i) + "/" + peer_number + "/C3.txt")
 
 		//Changing the data read into C1,C2,C3 format
 		data, _ := hex.DecodeString(string(C1_Data))
