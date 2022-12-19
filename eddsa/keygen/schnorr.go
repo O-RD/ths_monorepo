@@ -1,6 +1,7 @@
 package keygen
 
 import (
+	"github.com/coinbase/kryptology/pkg/core/curves"
 	"gopkg.in/dedis/kyber.v2"
 	"gopkg.in/dedis/kyber.v2/group/edwards25519"
 
@@ -10,6 +11,7 @@ import (
 
 var sha256 = edwards25519.NewBlakeSHA256Ed25519().Hash()
 var curve = edwards25519.NewBlakeSHA256Ed25519()
+var elgamal_Curve = curves.ED25519()
 
 // type Signature struct {
 // 	r kyber.Point

@@ -97,11 +97,19 @@ func Round2(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// to generate coefficients of the polynomial
 	SSK, _ := Encode.StringHexToScalar(curve, Round2_Values.SSK)
 	Generate_Polynomial_coefficients(T, poly, peer_number, SSK, "vss/"+peer_number)
+
 	// Generating the shares and storing in share array
 	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/"+peer_number)
 	//Generating Alphas
 	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
 	// Round2_Values.Alphas = alphas
+	for i = 0; i < T; i++ {
+		Round2_Values.Poly[i], _ = Encode.ScalarToStringHex(curve, poly[i])
+		Round2_Values.Alphas[i], _ = Encode.PointToStringHex(curve, alphas[i])
+	}
+	for i = 0; i < int64(Peer_Count); i++ {
+		Round2_Values.Shares[i] = share[i].String()
+	}
 
 }
 

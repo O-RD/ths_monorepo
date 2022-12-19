@@ -93,15 +93,17 @@ type Keygen_Data struct {
 }
 
 type Keygen_Store struct {
-	EPK              string //curves.Point
-	ESK              string //curves.Scalar
-	SSK              string //kyber.Scalar
-	SPK              string //kyber.Point
-	KGC              KGC
-	Alphas           []string
-	Encrypted_Shares []Encrypted_Share
-	V2               string
-	V3               string
+	EPK    string //curves.Point
+	ESK    string //curves.Scalar
+	SSK    string //kyber.Scalar
+	SPK    string //kyber.Point
+	KGC    KGC
+	Alphas []string
+	Poly   []string
+
+	Shares []string
+	V2     string
+	V3     string
 }
 
 type Encrypted_Share struct {
@@ -111,10 +113,10 @@ type Encrypted_Share struct {
 }
 
 type KGC struct {
-	Sign       string //kyber.Scalar
-	Public_key string //kyber.Point
-	Message    string
-	KGD        string //kyber.Point
+	Signature_S string //kyber.Scalar
+	Public_key  string //kyber.Point
+	Message     string
+	KGD         string //kyber.Point
 }
 
 type Keygen_Store_Round1 struct {
