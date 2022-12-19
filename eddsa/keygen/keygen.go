@@ -79,7 +79,8 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
-	Round2(send_chan, p, receive_chan, &Round_Values)
+	Round2(send_chan, p, receive_chan, &Data.Keygen_All_Data)
+	Round3(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {

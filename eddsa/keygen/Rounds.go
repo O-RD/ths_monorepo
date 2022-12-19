@@ -3,7 +3,6 @@ package keygen
 import (
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"time"
@@ -117,12 +116,12 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	peer_number := fmt.Sprint(p.My_Index + 1)
 	Peer_Count := len(p.Sorted_Peers)
 	fmt.Println("PEERCOUNT:", Peer_Count)
-	fmt.Println("MYINDEX:", peer_number)
+	fmt.Println("PEERNUMBER:", peer_number)
 	var T int64 = int64(p.Threshold)
 	fmt.Println("THRESHOLD:", T)
 
 	//Receiving alphas from other peers
-	Recieve_Alphas(int64(Peer_Count), peer_number, T, p.My_Index)
+	// Recieve_Alphas(int64(Peer_Count), peer_number, T, p.My_Index)
 
 	fmt.Println("ENCRYPTING SHARES & Broadcasting")
 
@@ -131,15 +130,18 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	//Reading Sender's elgamal Public key
 
-	path13 := "Data/" + peer_number
-	Sender_EPK_file, _ := ioutil.ReadFile(path13 + "/EPK.txt")
-	Sender_EPK_file, _ = hex.DecodeString(string(Sender_EPK_file))
-	Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(Sender_EPK_file)
+	// path13 := "Data/" + peer_number
+	// Sender_EPK_file, _ := ioutil.ReadFile(path13 + "/EPK.txt")
+	// Sender_EPK_file, _ = hex.DecodeString(string(Sender_EPK_file))
+	// Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(Sender_EPK_file)
+
+	temp, _ := hex.DecodeString(Round3_Values.EPK)
+	Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(temp)
 
 	//Reading Sender's elgamal Secret Key
-	Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
-	Sender_ESK_file, _ = hex.DecodeString(string(Sender_ESK_file))
-	Sender_ESK, _ := elg_curve.Scalar.SetBytes(Sender_ESK_file)
+	// Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
+	temp, _ = hex.DecodeString(Round3_Values.ESK)
+	Sender_ESK, _ := elg_curve.Scalar.SetBytes(temp)
 
 	//Path to vss generated parameters
 	path3 := "vss/" + peer_number

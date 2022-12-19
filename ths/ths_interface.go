@@ -101,9 +101,10 @@ type Keygen_Store struct {
 	Alphas []string
 	Poly   []string
 
-	Shares []string
-	V2     string
-	V3     string
+	Shares           []string
+	Encrypted_Shares []Encrypted_Share
+	V2               string
+	V3               string
 }
 
 type Encrypted_Share struct {

@@ -32,23 +32,23 @@ func Fill_default_Keygen() ths.Keygen_Store {
 
 	temp_alphas := []string{} // to store alphas
 
-	//temp_encrypt := []ths.Encrypted_Share{}
+	temp_encrypt := []ths.Encrypted_Share{}
 
 	epk, _ := elgamal_Curve.Point.Set(big.NewInt(0), big.NewInt(0))
 	send_epk := fmt.Sprintf("%x", epk.ToAffineCompressed())
 
 	return_Round := ths.Keygen_Store{
-		EPK:    send_epk,
-		ESK:    "nil",
-		SSK:    curve.Scalar().Zero().String(),
-		SPK:    curve.Point().Null().String(),
-		KGC:    temp_KGC,
-		Alphas: temp_alphas,
-		Poly:   []string{},
-		Shares: []string{},
-		//Encrypted_Shares: temp_encrypt,
-		V2: "nil",
-		V3: "nil",
+		EPK:              send_epk,
+		ESK:              "nil",
+		SSK:              curve.Scalar().Zero().String(),
+		SPK:              curve.Point().Null().String(),
+		KGC:              temp_KGC,
+		Alphas:           temp_alphas,
+		Poly:             []string{},
+		Shares:           []string{},
+		Encrypted_Shares: temp_encrypt,
+		V2:               "nil",
+		V3:               "nil",
 	}
 
 	return return_Round
