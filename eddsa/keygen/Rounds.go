@@ -255,29 +255,28 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		os.MkdirAll(path2, os.ModePerm)
 		file, _ := os.OpenFile(path2+"share"+strconv.Itoa(int(i))+".txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 		_, _ = fmt.Fprint(file, share)
-
-		fmt.Println(peer_number, "Verifying Shares")
-
-		G := Verify_Share(peer_number, int64(Peer_Count), int64(T), false, p.My_Index)
-		fmt.Println("Private Key Share:", G.String(), "\n")
-		path5 := "Data"
-		os.MkdirAll(path5, os.ModePerm)
-		file5, _ := os.Create(path5 + "/G.txt")
-		encoding.WriteHexScalar(curve, file5, G)
-
-		// if verify_GK(int64(Peer_Count), T) {
-		// 	fmt.Println("VERIFIED G")
-		// } else {
-		// 	fmt.Println("NOT VERIFIED G")
-		// }
-		//BROADCAST GROUP PUBLIC KEY
-
-		//G-> input to sign t unknwn
-		GK := Get_Group_Key(int64(Peer_Count), p.My_Index)
-		file5, _ = os.Create(path5 + "/GroupKey.txt")
-		encoding.WriteHexPoint(curve, file5, GK)
-		fmt.Println("GROUP KEY:", GK.String())
 	}
+	fmt.Println(peer_number, "Verifying Shares")
+
+	G := Verify_Share(peer_number, int64(Peer_Count), int64(T), false, p.My_Index)
+	fmt.Println("Private Key Share:", G.String(), "\n")
+	path5 := "Data"
+	os.MkdirAll(path5, os.ModePerm)
+	file5, _ := os.Create(path5 + "/G.txt")
+	encoding.WriteHexScalar(curve, file5, G)
+
+	// if verify_GK(int64(Peer_Count), T) {
+	// 	fmt.Println("VERIFIED G")
+	// } else {
+	// 	fmt.Println("NOT VERIFIED G")
+	// }
+	//BROADCAST GROUP PUBLIC KEY
+
+	//G-> input to sign t unknwn
+	GK := Get_Group_Key(int64(Peer_Count), p.My_Index)
+	file5, _ = os.Create(path5 + "/GroupKey.txt")
+	encoding.WriteHexPoint(curve, file5, GK)
+	fmt.Println("GROUP KEY:", GK.String())
 
 }
 

@@ -106,7 +106,17 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			}
 			os.MkdirAll("Data/Presigning_shares", 0777)
 			f, _ := os.Create("Data/Presigning_shares/share" + strconv.Itoa(sender_index) + ".txt")
-			f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C1)
+			f.WriteString(message_receive.Payload.Keygen.Shares_sign[p.My_Index])
+
+		} else if message_receive.Type == 5 {
+			p.Round5 = append(p.Round5, ths.Keygen_Store_Round5{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+			os.MkdirAll("Received/Signing/U_i", 0777)
+			f, _ := os.Create("Received/Signing/U_i/U_" + strconv.Itoa(sender_index) + ".txt")
+			f.WriteString(message_receive.Payload.Keygen.U_i)
 
 		}
 		fmt.Println(message_receive)

@@ -107,6 +107,11 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
 
 			}
+		} else if message_receive.Type == 5 {
+			if containsR5(p.Round5, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
 		}
 
 	})

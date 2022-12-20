@@ -1,9 +1,14 @@
 package keygen
 
 import (
+	SHA_256 "crypto/sha256"
+	"encoding/hex"
+	"os"
+
 	"github.com/coinbase/kryptology/pkg/core/curves"
 	"gopkg.in/dedis/kyber.v2"
 	"gopkg.in/dedis/kyber.v2/group/edwards25519"
+	"gopkg.in/dedis/kyber.v2/util/encoding"
 
 	// "go.dedis.ch/kyber/v3/group/edwards25519"
 	"github.com/O-RD/ths_monorepo/ths"
@@ -103,3 +108,33 @@ func Preprocessing() (privateKey kyber.Scalar, publicKey kyber.Point) {
 // 	fmt.Printf("Verification Result : %t\n\n", Verify(message, signature, publicKey))
 
 // }
+
+func hash_sign(value []byte) ([]byte, error) {
+	h := SHA_256.New()
+	h.Write(value)
+	sha1_hash := hex.EncodeToString(h.Sum(nil))
+	ret, _ := hex.DecodeString(sha1_hash)
+	return ret, nil
+
+}
+
+func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_number string) (kyber.Scalar, kyber.Point) {
+
+	file, _ := os.Open("Data/Signing/R_i.txt")
+	R_i, _ := encoding.ReadHexScalar(curve, file)
+	U_i := curve.Point().Mul(R_i, g)
+
+	// var T int64 = int64(Threshold)
+	// j, _ := strconv.Atoi(peer_number)
+
+	Hashing_message := Message + U.String()
+	H, _ := hash_sign([]byte(Hashing_message))
+	var H1 kyber.Scalar
+	H1 = curve.Scalar().Zero()
+	H1.SetBytes(H)
+	H1 = H1.Mul(H1, x_i) //H1=H*x_i
+	// H1 = H1.Mul(H1, Lambda(T, int64(j)))
+	V_i := R_i.Add(R_i, H1) //Val= R_i+ H1
+
+	return V_i, U_i
+}

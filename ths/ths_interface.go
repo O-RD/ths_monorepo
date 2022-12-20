@@ -99,6 +99,9 @@ type Keygen_Data struct {
 	KGC_sign    KGC
 	Alphas_sign []string
 	Shares_sign []string
+
+	U_i string // Pre-Signing R_i
+
 }
 
 type Keygen_Store struct {
