@@ -130,6 +130,21 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 				f, _ = os.Create("Received/" + s.Conn().RemotePeer().String() + "/Keygen_shares/C3.txt")
 				f.Write(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C3)
 			}
+		} else if message_receive.Type == 3 {
+			if containsR3(p.Round3, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+				os.MkdirAll("Received/"+s.Conn().RemotePeer().String()+"/Presigning_commit", 0777)
+				path := "Received/" + s.Conn().RemotePeer().String() + "/Presigning_commit"
+				f, _ := os.Create(path + "/Signature_S.txt")
+				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Signature_S)
+				f, _ = os.Create(path + "/Public_key.txt")
+				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Public_key)
+				f, _ = os.Create(path + "/Message.txt")
+				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Message)
+				f, _ = os.Create(path + "/KGD.txt")
+				f.WriteString(message_receive.Payload.Keygen.KGC_sign.KGD)
+
+			}
 		}
 
 	})

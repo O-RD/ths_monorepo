@@ -136,7 +136,7 @@ func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.
 
 	fmt.Printf("Commitment Done for Peer %s \n", peer_number)
 }
-func Commitment_sign(x kyber.Scalar, m string, peer_number string) {
+func Commitment_sign(x kyber.Scalar, m string, peer_number string, value_struct *ths.Keygen_Store) {
 	path1 := "Commitment/Signing/" + peer_number + "/KGC"
 	err := os.MkdirAll(path1, os.ModePerm)
 	if err != nil {
@@ -168,11 +168,15 @@ func Commitment_sign(x kyber.Scalar, m string, peer_number string) {
 		fmt.Println(e4)
 	}
 	encoding.WriteHexPoint(curve, f4, sig.R)
+	value_struct.KGC.Signature_S, _ = encoding.ScalarToStringHex(curve, sig.S)
+	value_struct.KGC.Message = m
+	value_struct.KGC.Public_key, _ = encoding.PointToStringHex(curve, publicKey)
+	value_struct.KGC.KGD, _ = encoding.PointToStringHex(curve, sig.R)
 	fmt.Printf("Sign Commitment Done for Peer %s \n", peer_number)
 }
 
 func Decommitment_j(peer_number string) string {
-	path := "Broadcast/" + peer_number
+	path := "Received/" + peer_number + "/Keygen_commit"
 	f1, e1 := os.Open(path + "/Signature_S.txt")
 	if e1 != nil {
 		fmt.Println(e1)
@@ -190,8 +194,7 @@ func Decommitment_j(peer_number string) string {
 	if e_2 != nil {
 		fmt.Println(e_2)
 	}
-	path1 := "Broadcast/" + peer_number + "/KGD.txt"
-	f3, e3 := os.Open(path1)
+	f3, e3 := os.Open(path + "/KGD.txt")
 	if e3 != nil {
 		fmt.Println(e3)
 	}
@@ -223,7 +226,7 @@ func Decommitment_j(peer_number string) string {
 }
 
 func Decommitment_j_sign(peer_number string) string {
-	path := "Broadcast/" + peer_number + "/Signing"
+	path := "Received/" + peer_number + "/Presigning_commit"
 	f1, e1 := os.Open(path + "/Signature_S.txt")
 	if e1 != nil {
 		fmt.Println(e1)
@@ -241,8 +244,7 @@ func Decommitment_j_sign(peer_number string) string {
 	if e_2 != nil {
 		fmt.Println(e_2)
 	}
-	path1 := "Broadcast/" + peer_number + "/Signing/KGD.txt"
-	f3, e3 := os.Open(path1)
+	f3, e3 := os.Open(path + "KGD.txt")
 	if e3 != nil {
 		fmt.Println(e3)
 	}

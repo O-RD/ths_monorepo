@@ -36,7 +36,15 @@ func containsR2(peers []ths.Keygen_Store_Round2, peer_id peer.ID) bool {
 
 	return false
 }
+func containsR3(peers []ths.Keygen_Store_Round3, peer_id peer.ID) bool {
+	for _, v := range peers {
+		if v.Id == peer_id {
+			return true
+		}
+	}
 
+	return false
+}
 func AckR1(peers []ths.Keygen_Store_Round1) bool {
 	fmt.Println("First Ack-", peers)
 	for _, v := range peers {

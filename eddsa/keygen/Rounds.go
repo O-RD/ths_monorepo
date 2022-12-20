@@ -75,11 +75,28 @@ func Round2(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	var T int64 = int64(p.Threshold)
 	fmt.Println("THRESHOLD:", T)
 
+	//Decomiting Values
+	var i int64
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(p.My_Index+1) {
+			continue
+		}
+		y_j := Decommitment_j(strconv.Itoa(int(i)))
+		//if Decomitment failed
+		if y_j == "Invalid" {
+			fmt.Printf("Peer %s commited Wrong Values Process Aborting \n", strconv.Itoa(int(i)))
+			//break
+			//If Decomitment is successful
+		} else {
+			fmt.Printf("Peer %d Successfully Commited his values \n", i)
+			fmt.Printf("Recieved Value from decommitment module is %s \n", y_j)
+			fmt.Printf("\n")
+		}
+	}
+
 	poly := []kyber.Scalar{}  // to store coefficients
 	share := []kyber.Scalar{} // to store share
 	alphas := []kyber.Point{} // to store alphas
-
-	var i int64
 
 	for i = 0; i < T; i++ {
 		poly = append(poly, curve.Scalar().Zero())
@@ -188,7 +205,7 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// wait_until(7)
 
 }
-func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round3_Values *ths.Keygen_Store) {
+func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round4_Values *ths.Keygen_Store) {
 
 	peer_number := fmt.Sprint(p.My_Index + 1)
 	Peer_Count := len(p.Sorted_Peers)
@@ -275,6 +292,94 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		file5, _ = os.Create(path5 + "/GroupKey.txt")
 		encoding.WriteHexPoint(curve, file5, GK)
 		fmt.Println("GROUP KEY:", GK.String())
+	}
+
+}
+
+func Round5(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round5_Values *ths.Keygen_Store) {
+
+	peer_number := fmt.Sprint(p.My_Index + 1)
+	Peer_Count := len(p.Sorted_Peers)
+	fmt.Println("PEERCOUNT:", Peer_Count)
+	fmt.Println("PEERNUMBER:", peer_number)
+	var T int64 = int64(p.Threshold)
+	fmt.Println("THRESHOLD:", T)
+
+	fmt.Println("******************************************PRESIGNING PHASE STARTED *******************************************")
+
+	r_i := curve.Scalar().Pick(curve.RandomStream())
+	Round5_Values.R_i, _ = Encode.ScalarToStringHex(curve, r_i)
+
+	// U_i, r_i := Setup_Keys(T, int64(Peer_Count), peer_number, g)
+
+	os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
+	file, _ := os.Create("Data/Signing/r_i.txt")
+	encoding.WriteHexScalar(curve, file, r_i)
+
+	fmt.Println("Commiting Signing r_i")
+
+	Commitment_sign(r_i, "helloworld", peer_number, Round5_Values)
+
+}
+
+func Round6(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round6_Values *ths.Keygen_Store) {
+	peer_number := fmt.Sprint(p.My_Index + 1)
+	Peer_Count := len(p.Sorted_Peers)
+	fmt.Println("PEERCOUNT:", Peer_Count)
+	fmt.Println("PEERNUMBER:", peer_number)
+	var T int64 = int64(p.Threshold)
+	fmt.Println("THRESHOLD:", T)
+
+	//Decomiting Values
+	var i int64
+	for i = 1; i <= int64(Peer_Count); i++ {
+		if i == int64(p.My_Index+1) {
+			continue
+		}
+		y_j := Decommitment_j_sign(strconv.Itoa(int(i)))
+		if y_j == "Invalid" {
+			fmt.Printf("Peer %s commited Wrong Values Process Aborting \n", strconv.Itoa(int(i)))
+			//break
+		} else {
+			fmt.Printf("Peer %d Successfully Commited his values \n", i)
+			fmt.Printf("Recieved Value from decommitment module is %s \n", y_j)
+			fmt.Printf("\n")
+		}
+	}
+
+	poly := []kyber.Scalar{}  // to store coefficients
+	share := []kyber.Scalar{} // to store share
+	alphas := []kyber.Point{} // to store alphas
+
+	for i = 0; i < T; i++ {
+		poly = append(poly, curve.Scalar().Zero())
+	}
+
+	for i = 0; i < T; i++ {
+		alphas = append(alphas, curve.Point().Null())
+	}
+
+	for i = 1; i <= int64(Peer_Count); i++ {
+		share = append(share, curve.Scalar().Zero())
+	}
+
+	r_i, _ := Encode.StringHexToScalar(curve, Round6_Values.R_i)
+	// to generate coefficients of the polynomial         //r_i
+	Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "vss/Signing/"+peer_number)
+	// fmt.Println("COFFE", poly[0].String(), "\n", poly[1].String(), "\n")
+
+	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/Signing/"+peer_number)
+	// fmt.Println("SHARES", share[0].String(), "\n", share[1].String(), "\n")
+
+	//Generating Alphas
+	Generate_Alphas(T, alphas, poly, peer_number, "vss/Signing/"+peer_number)
+	// fmt.Println("ALPHAS", alphas[0].String(), "\n", alphas[1].String(), "\n")
+	for i = 0; i < T; i++ {
+		Round6_Values.Poly_sign[i], _ = Encode.ScalarToStringHex(curve, poly[i])
+		Round6_Values.Alphas_sign[i], _ = Encode.PointToStringHex(curve, alphas[i])
+	}
+	for i = 0; i < int64(Peer_Count); i++ {
+		Round6_Values.Shares_sign[i], _ = Encode.ScalarToStringHex(curve, share[i])
 	}
 
 }

@@ -33,6 +33,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			KGC:        Data.Keygen_All_Data.KGC,
 			Alphas:     []string{},
 			Enc_shares: []ths.Encrypted_Share{},
+			KGC_sign:   ths.KGC{},
 		},
 	}
 
@@ -79,6 +80,8 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	//compute after round and proceed - replaces wait_until()
 	p.Round = 2
 	fmt.Println("Starting Round 2")
+
+	//Below Rounds shall Be combined
 	Round2(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Round3(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 
@@ -112,7 +115,39 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
-	fmt.Println("End of Round 2")
+	fmt.Println("End of Round 3")
+
+	//Below Rounds Will be Combined
+	Round4(send_chan, p, receive_chan, &Data.Keygen_All_Data)
+	Round5(send_chan, p, receive_chan, &Data.Keygen_All_Data)
+	Values.Keygen.KGC_sign = Data.Keygen_All_Data.KGC_sign
+
+	for i := 0; i < len(p.Sorted_Peers); i++ {
+
+		if i == p.My_Index {
+			continue
+		}
+		//if p.Peers[i].Id != p.Host.ID() -> Continue
+		send_chan <- ths.Message{From: *p,
+			Type:         3,
+			To:           p.Sorted_Peers[i].Id,
+			Payload_name: "Third",
+			Payload:      Values,
+			Status:       0}
+
+	}
+	for {
+		if len(p.Round3) == len(p.Peers) {
+			Ack_sender <- 3
+			break
+		}
+		time.Sleep(time.Second * 2)
+	}
+	for {
+		if <-proceed_chan == 3 {
+			break
+		}
+	}
 
 	// time.Sleep(time.Second * 10)
 }
