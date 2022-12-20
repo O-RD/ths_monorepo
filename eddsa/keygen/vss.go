@@ -250,7 +250,7 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool, my_index i
 	path := ""
 	path2 := ""
 	if signing {
-		path = "Received/Signing/" + peer_number + "/Shares/share"
+		path = "Data/Presigning_shares/"
 	} else {
 		path = "Data/Keygen_shares/"
 	}

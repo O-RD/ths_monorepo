@@ -148,6 +148,37 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
+	Round6(send_chan, p, receive_chan, &Data.Keygen_All_Data)
+	Values.Keygen.Alphas_sign = Data.Keygen_All_Data.Alphas_sign
+	Values.Keygen.Shares_sign = Data.Keygen_All_Data.Shares_sign
+	for i := 0; i < len(p.Sorted_Peers); i++ {
+
+		if i == p.My_Index {
+			continue
+		}
+		//if p.Peers[i].Id != p.Host.ID() -> Continue
+		send_chan <- ths.Message{From: *p,
+			Type:         4,
+			To:           p.Sorted_Peers[i].Id,
+			Payload_name: "Forth",
+			Payload:      Values,
+			Status:       0}
+
+	}
+	for {
+		if len(p.Round3) == len(p.Peers) {
+			Ack_sender <- 4
+			break
+		}
+		time.Sleep(time.Second * 2)
+	}
+	for {
+		if <-proceed_chan == 4 {
+			break
+		}
+	}
+
+	Round7(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 
 	// time.Sleep(time.Second * 10)
 }

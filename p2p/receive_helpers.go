@@ -7,6 +7,15 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 )
 
+func Get_index(peers []ths.THS, peer_id peer.ID) int {
+	var i int
+	for i = 0; i < len(peers); i++ {
+		if peers[i].Id.String() == peer_id.String() {
+			return i + 1
+		}
+	}
+	return -1
+}
 func contains(peers []ths.THS, peer_id peer.ID) bool {
 	for _, v := range peers {
 		if v.Id == peer_id {
@@ -37,6 +46,15 @@ func containsR2(peers []ths.Keygen_Store_Round2, peer_id peer.ID) bool {
 	return false
 }
 func containsR3(peers []ths.Keygen_Store_Round3, peer_id peer.ID) bool {
+	for _, v := range peers {
+		if v.Id == peer_id {
+			return true
+		}
+	}
+
+	return false
+}
+func containsR4(peers []ths.Keygen_Store_Round4, peer_id peer.ID) bool {
 	for _, v := range peers {
 		if v.Id == peer_id {
 			return true

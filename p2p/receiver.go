@@ -2,13 +2,11 @@ package p2p
 
 import (
 	"bufio"
-	"strconv"
 
 	// "encoding"
 	"encoding/json"
 	"fmt"
 	"log"
-	"os"
 	"time"
 
 	ths "github.com/O-RD/ths_monorepo/ths"
@@ -89,60 +87,24 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 		if message_receive.Type == 1 {
 
 			if containsR1(p.Round1, s.Conn().RemotePeer()) == false {
-				// elgamal_Curve := curves.ED25519()
 				// fmt.Println("INSIDE RECEIVER:", message_receive.Payload)
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
-				os.MkdirAll("Received/"+s.Conn().RemotePeer().String()+"/Keys", 0777)
-
-				path := "Received/" + s.Conn().RemotePeer().String() + "/Keys"
-				f, _ := os.Create(path + "/EPK.txt")
-				f.WriteString(message_receive.Payload.Keygen.EPK)
-				f, _ = os.Create(path + "SPK.txt")
-				f.WriteString(message_receive.Payload.Keygen.SPK)
-
-				os.MkdirAll("Received/"+s.Conn().RemotePeer().String()+"/Keygen_commit", 0777)
-				path = "Received/" + s.Conn().RemotePeer().String() + "/Keygen_Commit"
-				f, _ = os.Create(path + "/Signature_S.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC.Signature_S)
-				f, _ = os.Create(path + "/Public_key.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC.Public_key)
-				f, _ = os.Create(path + "/Message.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC.Message)
-				f, _ = os.Create(path + "/KGD.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC.KGD)
 
 			}
 		} else if message_receive.Type == 2 {
 			if containsR2(p.Round2, s.Conn().RemotePeer()) == false {
+				// p.Sorted_Peers
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
-				os.MkdirAll("Received/"+s.Conn().RemotePeer().String()+"/Keygen_alphas", 0777)
-				var i int
-				path := "Received/" + s.Conn().RemotePeer().String() + "/Keygen_alphas"
-				for i = 0; i < p.Threshold; i++ {
-					f, _ := os.Create(path + "/alpha" + strconv.Itoa(i) + ".txt")
-					f.WriteString(message_receive.Payload.Keygen.Alphas[i])
-				}
-				//How to GET TOTAL NO> OF PEERS??
-				f, _ := os.Create("Received/" + s.Conn().RemotePeer().String() + "/Keygen_shares/C1.txt")
-				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C1)
-				f, _ = os.Create("Received/" + s.Conn().RemotePeer().String() + "/Keygen_shares/C2.txt")
-				f.Write(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C2)
-				f, _ = os.Create("Received/" + s.Conn().RemotePeer().String() + "/Keygen_shares/C3.txt")
-				f.Write(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C3)
+
 			}
 		} else if message_receive.Type == 3 {
 			if containsR3(p.Round3, s.Conn().RemotePeer()) == false {
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
-				os.MkdirAll("Received/"+s.Conn().RemotePeer().String()+"/Presigning_commit", 0777)
-				path := "Received/" + s.Conn().RemotePeer().String() + "/Presigning_commit"
-				f, _ := os.Create(path + "/Signature_S.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Signature_S)
-				f, _ = os.Create(path + "/Public_key.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Public_key)
-				f, _ = os.Create(path + "/Message.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC_sign.Message)
-				f, _ = os.Create(path + "/KGD.txt")
-				f.WriteString(message_receive.Payload.Keygen.KGC_sign.KGD)
+
+			}
+		} else if message_receive.Type == 4 {
+			if containsR4(p.Round4, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
 
 			}
 		}

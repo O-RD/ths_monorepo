@@ -645,3 +645,23 @@ func Get_Group_Key(Peer_Count int64, my_index int) kyber.Point {
 	}
 	return GK
 }
+
+func Get_Sum_alpha0(Peer_Count int64, my_index int) kyber.Point {
+	var i int64
+	sum := curve.Point().Null()
+	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
+			path2 := "vss/Signing/" + fmt.Sprint(i) + "/alpha0.txt"
+
+			file2, _ := os.Open(path2)
+			temp, _ := encoding.ReadHexPoint(curve, file2)
+			sum = sum.Add(sum, temp)
+			continue
+		}
+		path := "Received/" + strconv.Itoa(int(i)) + "/Presigning_alphas/alpha0.txt"
+		file, _ := os.Open(path)
+		temp, _ := encoding.ReadHexPoint(curve, file)
+		sum = sum.Add(sum, temp)
+	}
+	return sum
+}

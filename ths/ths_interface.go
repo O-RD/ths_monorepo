@@ -79,6 +79,10 @@ type P2P struct {
 	Round2 []Keygen_Store_Round2
 
 	Round3 []Keygen_Store_Round3
+
+	Round4 []Keygen_Store_Round4
+
+	Round5 []Keygen_Store_Round5
 }
 
 type Moniker_message struct {
@@ -87,12 +91,14 @@ type Moniker_message struct {
 
 //THe Data to be Broadcasted
 type Keygen_Data struct {
-	EPK        string //curves.Point
-	SPK        string //kyber.Point
-	KGC        KGC
-	Alphas     []string
-	Enc_shares []Encrypted_Share
-	KGC_sign   KGC
+	EPK         string //curves.Point
+	SPK         string //kyber.Point
+	KGC         KGC
+	Alphas      []string
+	Enc_shares  []Encrypted_Share
+	KGC_sign    KGC
+	Alphas_sign []string
+	Shares_sign []string
 }
 
 type Keygen_Store struct {
@@ -108,11 +114,15 @@ type Keygen_Store struct {
 	Encrypted_Shares []Encrypted_Share
 	V2               string
 	V3               string
-	R_i              string
+	R_i              string //Secret of Presign Poly
 	KGC_sign         KGC
 	Poly_sign        []string
 	Alphas_sign      []string
 	Shares_sign      []string
+
+	R   string //Presing R_i
+	U_i string
+	U   string
 }
 
 type Encrypted_Share struct {
@@ -139,6 +149,18 @@ type Keygen_Store_Round2 struct {
 	Ack int
 }
 type Keygen_Store_Round3 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round4 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round5 struct {
 	Id  peer.ID
 	V1  Round_Data
 	Ack int
