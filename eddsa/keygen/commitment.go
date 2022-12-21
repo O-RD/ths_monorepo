@@ -187,7 +187,7 @@ func Decommitment_j(peer_number string) string {
 		fmt.Println(e)
 	}
 
-	f2, e2 := os.Open(path + "/PubKey.txt")
+	f2, e2 := os.Open(path + "/Pubkey.txt")
 	if e2 != nil {
 		fmt.Println(e2)
 	}
