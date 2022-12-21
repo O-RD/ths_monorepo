@@ -40,7 +40,7 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			path = "Received/" + strconv.Itoa(sender_index) + "/Keygen_commit"
 			f, _ = os.Create(path + "/Signature_S.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC.Signature_S)
-			f, _ = os.Create(path + "/Public_key.txt")
+			f, _ = os.Create(path + "/Pubkey.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC.Public_key)
 			f, _ = os.Create(path + "/Message.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC.Message)
@@ -84,7 +84,7 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			path := "Received/" + strconv.Itoa(sender_index) + "/Presigning_commit"
 			f, _ := os.Create(path + "/Signature_S.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Signature_S)
-			f, _ = os.Create(path + "/Public_key.txt")
+			f, _ = os.Create(path + "/Pubkey.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Public_key)
 			f, _ = os.Create(path + "/Message.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Message)
