@@ -120,7 +120,7 @@ func hash_sign(value []byte) ([]byte, error) {
 
 func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_number string) (kyber.Scalar, kyber.Point) {
 
-	file, _ := os.Open("Data/Signing/R_i.txt")
+	file, _ := os.Open("Data/" + peer_number + "/Signing/R_i.txt")
 	R_i, _ := encoding.ReadHexScalar(curve, file)
 	U_i := curve.Point().Mul(R_i, g)
 
@@ -137,4 +137,30 @@ func Signing_T_Unkown(U kyber.Point, x_i kyber.Scalar, Message string, peer_numb
 	V_i := R_i.Add(R_i, H1) //Val= R_i+ H1
 
 	return V_i, U_i
+}
+
+func Verify_sign_share(V_i kyber.Scalar, U kyber.Point, U_i kyber.Point, message string, X_i kyber.Point) bool {
+	//message, U , V public key
+	//V is sum of all V_i's
+	//U is sum of all U_i's
+	//GK is sum of all alpha[0] (group key)
+
+	t1 := curve.Point().Mul(V_i, g)
+	// h := Hash(message + U.String())
+	Hashing_message := message + U.String()
+	h, _ := hash_sign([]byte(Hashing_message))
+
+	var H1 kyber.Scalar
+	H1 = curve.Scalar().Zero()
+	H1.SetBytes(h)
+
+	t2 := curve.Point().Mul(H1, X_i)
+	t2 = t2.Add(t2, U_i)
+
+	if t1.Equal(t2) {
+		return true
+	} else {
+		return false
+	}
+
 }

@@ -97,7 +97,7 @@ func Comit_Verify(m string, S ths.Signature, y kyber.Point) bool {
 // }
 
 func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.Keygen_Store) {
-	path1 := "Commitment/" + peer_number + "/KGC"
+	path1 := "Temp/Commitment/" + peer_number + "/KGC"
 	err := os.MkdirAll(path1, os.ModePerm)
 	if err != nil {
 		panic(err)
@@ -123,7 +123,7 @@ func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.
 	}
 	f3.WriteString(m)
 	f3.Close()
-	f4, e4 := os.OpenFile("Commitment/"+peer_number+"/KGD.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	f4, e4 := os.OpenFile("Temp/Commitment/"+peer_number+"/KGD.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if e4 != nil {
 		fmt.Println(e4)
 	}
@@ -137,7 +137,7 @@ func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.
 	fmt.Printf("Commitment Done for Peer %s \n", peer_number)
 }
 func Commitment_sign(x kyber.Scalar, m string, peer_number string, value_struct *ths.Keygen_Store) {
-	path1 := "Commitment/Signing/" + peer_number + "/KGC"
+	path1 := "Temp/Commitment/Signing/" + peer_number + "/KGC"
 	err := os.MkdirAll(path1, os.ModePerm)
 	if err != nil {
 		panic(err)
@@ -163,15 +163,15 @@ func Commitment_sign(x kyber.Scalar, m string, peer_number string, value_struct 
 	}
 	f3.WriteString(m)
 	f3.Close()
-	f4, e4 := os.OpenFile("Commitment/Signing/"+peer_number+"/KGD.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	f4, e4 := os.OpenFile("Temp/Commitment/Signing/"+peer_number+"/KGD.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if e4 != nil {
 		fmt.Println(e4)
 	}
 	encoding.WriteHexPoint(curve, f4, sig.R)
-	value_struct.KGC.Signature_S, _ = encoding.ScalarToStringHex(curve, sig.S)
-	value_struct.KGC.Message = m
-	value_struct.KGC.Public_key, _ = encoding.PointToStringHex(curve, publicKey)
-	value_struct.KGC.KGD, _ = encoding.PointToStringHex(curve, sig.R)
+	value_struct.KGC_sign.Signature_S, _ = encoding.ScalarToStringHex(curve, sig.S)
+	value_struct.KGC_sign.Message = m
+	value_struct.KGC_sign.Public_key, _ = encoding.PointToStringHex(curve, publicKey)
+	value_struct.KGC_sign.KGD, _ = encoding.PointToStringHex(curve, sig.R)
 	fmt.Printf("Sign Commitment Done for Peer %s \n", peer_number)
 }
 
@@ -245,7 +245,7 @@ func Decommitment_j_sign(peer_number string) string {
 	if e_2 != nil {
 		fmt.Println(e_2)
 	}
-	f3, e3 := os.Open(path + "KGD.txt")
+	f3, e3 := os.Open(path + "/KGD.txt")
 	if e3 != nil {
 		fmt.Println(e3)
 	}

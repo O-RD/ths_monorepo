@@ -25,10 +25,10 @@ func Signing(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Paylo
 
 	// file, _ := os.Open("Data/Signing/R_i.txt")
 
-	file, _ := os.Open("Data/G.txt")
+	file, _ := os.Open("Data/" + peer_number + "/G.txt")
 	x_i, _ := encoding.ReadHexScalar(curve, file)
 
-	file, _ = os.Open("Data/Signing/U.txt")
+	file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
 	U, _ := encoding.ReadHexPoint(curve, file)
 	fmt.Println("U from PreSign:", U.String())
 
@@ -39,5 +39,12 @@ func Signing(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Paylo
 
 	f, _ := os.Open("Data/Final_sign.txt")
 	encoding.WriteHexScalar(curve, f, V_i)
+
+	X_i := curve.Point().Mul(x_i, g)
+	if Verify_sign_share(V_i, U, U_i, message, X_i) {
+		fmt.Println("INDIVIDUAL SHARES ARE VERIFIED")
+	} else {
+		fmt.Println("NOT VERIFIED INDIVIDUAL SHARES")
+	}
 
 }

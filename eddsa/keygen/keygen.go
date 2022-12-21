@@ -193,7 +193,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		send_chan <- ths.Message{From: *p,
 			Type:         5,
 			To:           p.Sorted_Peers[i].Id,
-			Payload_name: "Forth",
+			Payload_name: "Fifth",
 			Payload:      Values,
 			Status:       0}
 
@@ -210,7 +210,6 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
-
-	fmt.Println("SIGNING STARTING:")
+	Signing(send_chan, p, receive_chan, "RANDOM_MESSAGE")
 	// time.Sleep(time.Second * 10)
 }

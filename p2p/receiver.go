@@ -197,6 +197,48 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 				proceed <- 3
 			}
 
+		} else if message_receive == 4 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round4); i++ {
+					if p.Round4[i].Id == s.Conn().RemotePeer() {
+						p.Round4[i].Ack = 4
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round4) == len(p.Peers) && AckR4(p.Round4) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 4
+			}
+
+		} else if message_receive == 5 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round5); i++ {
+					if p.Round5[i].Id == s.Conn().RemotePeer() {
+						p.Round5[i].Ack = 5
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round5) == len(p.Peers) && AckR5(p.Round5) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 5
+			}
+
 		}
 	})
 }

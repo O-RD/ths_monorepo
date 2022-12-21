@@ -118,12 +118,12 @@ func Round2(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	// to generate coefficients of the polynomial
 	SSK, _ := Encode.StringHexToScalar(curve, Round2_Values.SSK)
-	Generate_Polynomial_coefficients(T, poly, peer_number, SSK, "vss/"+peer_number)
+	Generate_Polynomial_coefficients(T, poly, peer_number, SSK, "Temp/vss/"+peer_number)
 
 	// Generating the shares and storing in share array
-	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/"+peer_number)
+	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "Temp/vss/"+peer_number)
 	//Generating Alphas
-	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
+	Generate_Alphas(T, alphas, poly, peer_number, "Temp/vss/"+peer_number)
 	// Round2_Values.Alphas = alphas
 	for i = 0; i < T; i++ {
 		Pol, _ := Encode.ScalarToStringHex(curve, poly[i])
@@ -167,7 +167,7 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// fmt.Println("Se:", Sender_ESK)
 
 	//Path to vss generated parameters
-	// path3 := "vss/" + peer_number
+	// path3 := "Temp/vss/" + peer_number
 
 	var i int64
 
@@ -285,7 +285,7 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	G := Verify_Share(peer_number, int64(Peer_Count), int64(T), false, p.My_Index)
 	fmt.Println("Private Key Share:", G.String(), "\n")
-	path5 := "Data"
+	path5 := "Data/" + peer_number
 	os.MkdirAll(path5, os.ModePerm)
 	file5, _ := os.Create(path5 + "/G.txt")
 	encoding.WriteHexScalar(curve, file5, G)
@@ -322,7 +322,7 @@ func Round5(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// U_i, r_i := Setup_Keys(T, int64(Peer_Count), peer_number, g)
 
 	os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
-	file, _ := os.Create("Data/Signing/r_i.txt")
+	file, _ := os.Create("Data/" + peer_number + "Signing/r_i.txt")
 	encoding.WriteHexScalar(curve, file, r_i)
 
 	fmt.Println("Commiting Signing r_i")
@@ -374,21 +374,24 @@ func Round6(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	r_i, _ := Encode.StringHexToScalar(curve, Round6_Values.R_i)
 	// to generate coefficients of the polynomial         //r_i
-	Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "vss/Signing/"+peer_number)
+	Generate_Polynomial_coefficients(T, poly, peer_number, r_i, "Temp/vss/Signing/"+peer_number)
 	// fmt.Println("COFFE", poly[0].String(), "\n", poly[1].String(), "\n")
 
-	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "vss/Signing/"+peer_number)
+	Generate_share(int64(Peer_Count), T, poly, share, peer_number, "Temp/vss/Signing/"+peer_number)
 	// fmt.Println("SHARES", share[0].String(), "\n", share[1].String(), "\n")
 
 	//Generating Alphas
-	Generate_Alphas(T, alphas, poly, peer_number, "vss/Signing/"+peer_number)
+	Generate_Alphas(T, alphas, poly, peer_number, "Temp/vss/Signing/"+peer_number)
 	// fmt.Println("ALPHAS", alphas[0].String(), "\n", alphas[1].String(), "\n")
 	for i = 0; i < T; i++ {
-		Round6_Values.Poly_sign[i], _ = Encode.ScalarToStringHex(curve, poly[i])
-		Round6_Values.Alphas_sign[i], _ = Encode.PointToStringHex(curve, alphas[i])
+		Pol, _ := Encode.ScalarToStringHex(curve, poly[i])
+		alp, _ := Encode.PointToStringHex(curve, alphas[i])
+		Round6_Values.Poly_sign = append(Round6_Values.Poly_sign, Pol)
+		Round6_Values.Alphas_sign = append(Round6_Values.Alphas_sign, alp)
 	}
 	for i = 0; i < int64(Peer_Count); i++ {
-		Round6_Values.Shares_sign[i], _ = Encode.ScalarToStringHex(curve, share[i])
+		sha, _ := Encode.ScalarToStringHex(curve, share[i])
+		Round6_Values.Shares_sign = append(Round6_Values.Shares_sign, sha)
 	}
 }
 
@@ -403,20 +406,20 @@ func Round7(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	fmt.Println("Verifying Signing Shares")
 
-	os.MkdirAll("Data/Signing", 0777)
+	os.MkdirAll("Data/"+peer_number+"/Signing", 0777)
 
-	path := "Data/Signing/R_i.txt"
+	path := "Data/" + peer_number + "/Signing/R_i.txt"
 	R_i := Verify_Share(peer_number, int64(Peer_Count), T, true, p.My_Index)
 	file, _ := os.Create(path)
 	encoding.WriteHexScalar(curve, file, R_i)
 
 	U_i := curve.Point().Mul(R_i, g)
-	file, _ = os.Create("Data/Signing/U_i.txt")
+	file, _ = os.Create("Data/" + peer_number + "/Signing/U_i.txt")
 	encoding.WriteHexPoint(curve, file, U_i)
 
 	U := Get_Sum_alpha0(int64(Peer_Count), p.My_Index)
 
-	file, _ = os.Create("Data/Signing/U.txt")
+	file, _ = os.Create("Data/" + peer_number + "/Signing/U.txt")
 	encoding.WriteHexPoint(curve, file, U)
 
 	Round7_Values.R, _ = Encode.ScalarToStringHex(curve, R_i)
@@ -424,3 +427,45 @@ func Round7(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	Round7_Values.U, _ = Encode.PointToStringHex(curve, U)
 
 }
+
+// func Round8(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round7_Values *ths.Keygen_Store){
+
+// 	peer_number := fmt.Sprint(p.My_Index + 1)
+// 	Peer_Count := len(p.Sorted_Peers)
+// 	fmt.Println("PEERCOUNT:", Peer_Count)
+// 	fmt.Println("PEERNUMBER:", peer_number)
+// 	var T int64 = int64(p.Threshold)
+// 	fmt.Println("THRESHOLD:", T)
+
+// 	// var T_arr []int
+// 	// T_arr = append(T_arr, my_index+1)
+
+// 	//THIS IS THE ARRAY OF SIGNERS, WILL COME FROM FRONT END:
+// 	T_arr:=[]int{1,2}
+
+// 	// r_i:= curve.Scalar().Pick(curve.RandomStream())
+
+// 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
+
+// 	file, _ := os.Open("Received/Signing/" + peer_number + "/R_i.txt")
+
+// 	file, _ = os.Open("Received/" + peer_number + "/G.txt")
+// 	x_i, _ := encoding.ReadHexScalar(curve, file)
+
+// 	file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
+// 	U, _ := encoding.ReadHexPoint(curve, file)
+// 	fmt.Println("U from PreSign:", U.String())
+
+// 	V_i, U_i := Signing_T_Unkown(U, x_i, Message, peer_number)
+// 	fmt.Println("U_i returned from sign:", U_i.String(), "\n")
+
+// 	X_i := curve.Point().Mul(x_i, g)
+// 	fmt.Println("X_i", X_i.String())
+
+// 	if Verify_sign_share(V_i, U, U_i, Message, X_i) {
+// 		fmt.Println("INDIVIDUAL SHARES ARE VERIFIED")
+// 	} else {
+// 		fmt.Println("NOT VERIFIED INDIVIDUAL SHARES")
+// 	}
+
+// }
