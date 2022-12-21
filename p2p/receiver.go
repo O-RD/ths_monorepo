@@ -98,7 +98,10 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 
 			}
 		} else if message_receive.Type == 3 {
+			fmt.Print("HERE-------------------")
 			if containsR3(p.Round3, s.Conn().RemotePeer()) == false {
+				fmt.Print("HERE-------------------")
+
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
 
 			}
