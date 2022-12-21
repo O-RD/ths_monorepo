@@ -58,7 +58,6 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Payload_name: "First",
 			Payload:      Values,
 			Status:       0}
-
 	}
 	for {
 		if len(p.Round1) == len(p.Peers) {
@@ -77,7 +76,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 
 	fmt.Println("End of Round 1")
 	// time.Sleep(time.Second * 10)
-	//compute after round and proceed - replaces wait_until()
+
 	p.Round = 2
 	fmt.Println("Starting Round 2")
 
@@ -148,6 +147,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
+
 	Round6(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Values.Keygen.Alphas_sign = Data.Keygen_All_Data.Alphas_sign
 	Values.Keygen.Shares_sign = Data.Keygen_All_Data.Shares_sign

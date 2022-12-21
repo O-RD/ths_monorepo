@@ -176,6 +176,7 @@ func Commitment_sign(x kyber.Scalar, m string, peer_number string, value_struct 
 }
 
 func Decommitment_j(peer_number string) string {
+
 	path := "Received/" + peer_number + "/Keygen_commit"
 	f1, e1 := os.Open(path + "/Signature_S.txt")
 	if e1 != nil {

@@ -89,7 +89,7 @@ type Moniker_message struct {
 	Moniker string
 }
 
-//THe Data to be Broadcasted
+//The Data to be Broadcasted
 type Keygen_Data struct {
 	EPK         string //curves.Point
 	SPK         string //kyber.Point
@@ -99,11 +99,10 @@ type Keygen_Data struct {
 	KGC_sign    KGC
 	Alphas_sign []string
 	Shares_sign []string
-
-	U_i string // Pre-Signing R_i
-
+	U_i         string
 }
 
+//All the key values generated will be stored in this structure
 type Keygen_Store struct {
 	EPK    string //curves.Point
 	ESK    string //curves.Scalar

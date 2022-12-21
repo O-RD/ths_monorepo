@@ -61,6 +61,8 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	//storing the schnorr secret key to Prvate Folder
 
 	//commiting SSK
+
+	// CHANGE IT TO A RANDOM MESSAGE
 	Commitment(SSK, "hello world", peer_number, Round1_Values)
 
 }
@@ -146,11 +148,6 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	elg_curve := Setup()
 
 	//Reading Sender's elgamal Public key
-
-	// path13 := "Data/" + peer_number
-	// Sender_EPK_file, _ := ioutil.ReadFile(path13 + "/EPK.txt")
-	// Sender_EPK_file, _ = hex.DecodeString(string(Sender_EPK_file))
-	// Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(Sender_EPK_file)
 
 	temp, _ := hex.DecodeString(Round3_Values.EPK)
 	Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(temp)
@@ -365,7 +362,6 @@ func Round6(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	for i = 0; i < int64(Peer_Count); i++ {
 		Round6_Values.Shares_sign[i], _ = Encode.ScalarToStringHex(curve, share[i])
 	}
-
 }
 
 func Round7(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round7_Values *ths.Keygen_Store) {
