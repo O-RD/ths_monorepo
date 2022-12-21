@@ -96,6 +96,17 @@ func AckR2(peers []ths.Keygen_Store_Round2) bool {
 	return true
 }
 
+func AckR3(peers []ths.Keygen_Store_Round3) bool {
+	// fmt.Println("Second", peers)
+	for _, v := range peers {
+		if v.Ack == 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 func GetIndex(Sorted_Peers []ths.THS, peer_id peer.ID) int {
 	for i, v := range Sorted_Peers {
 		if v.Id == peer_id {
