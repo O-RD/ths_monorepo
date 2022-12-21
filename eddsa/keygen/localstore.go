@@ -54,21 +54,25 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			})
 			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
 
-			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_alphas", 0777)
-			var i int
-			path := "Received/" + strconv.Itoa(sender_index) + "/Keygen_alphas"
-			for i = 0; i < p.Threshold; i++ {
-				f, _ := os.Create(path + "/alpha" + strconv.Itoa(i) + ".txt")
-				f.WriteString(message_receive.Payload.Keygen.Alphas[i])
+			if sender_index == p.My_Index {
+				continue
+			} else {
+				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_alphas", 0777)
+				var i int
+				path := "Received/" + strconv.Itoa(sender_index) + "/Keygen_alphas"
+				for i = 0; i < p.Threshold; i++ {
+					f, _ := os.Create(path + "/alpha" + strconv.Itoa(i) + ".txt")
+					f.WriteString(message_receive.Payload.Keygen.Alphas[i])
+				}
+				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_shares", 0777)
+
+				f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C1.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C1)
+				f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C2.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C2)
+				f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C3.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C3)
 			}
-
-			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C1.txt")
-			f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C1)
-			f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C2.txt")
-			f.Write(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C2)
-			f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C3.txt")
-			f.Write(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C3)
-
 			// if len(p.Round2) == len(p.Peers) {
 			// 	Ack_sender <- 2
 			// }

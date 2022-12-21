@@ -129,8 +129,8 @@ type Keygen_Store struct {
 
 type Encrypted_Share struct {
 	C1 string
-	C2 []byte
-	C3 []byte
+	C2 string
+	C3 string
 }
 
 type KGC struct {

@@ -17,7 +17,7 @@ func Send(message_channel chan ths.Message) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("INDIDE CMMS:", message_data.Payload)
+		// fmt.Println("INDIDE CMMS:", message_data.Payload)
 		message := ths.Payload{
 			Sender:       message_data.From.Host.ID(),
 			Type:         message_data.Type,

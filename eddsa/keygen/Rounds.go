@@ -38,14 +38,18 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	ESK, EPK := Elgamal_KeyGen()
 
 	Round1_Values.EPK = fmt.Sprintf("%x", EPK.ToAffineCompressed())
-	Round1_Values.ESK = string(ESK.Bytes())
+	Round1_Values.ESK = hex.EncodeToString(ESK.Bytes())
 
+	// fmt.Println("->", Round1_Values.ESK)
+	// temp, _ := hex.DecodeString(Round1_Values.ESK)
+	// tempESK, _ := elgamal_Curve.Scalar.SetBytes(temp)
 	fmt.Println(" \n ")
 	fmt.Println("Elgamal Public Key:")
-	fmt.Println(&EPK)
+	fmt.Println(EPK)
 	fmt.Println("Elgamal Secret Key:")
-	fmt.Println(&ESK)
+	fmt.Println(string(ESK.Bytes()))
 	fmt.Printf("\n")
+	// fmt.Println("GELFJSD ESK:", string(tempESK.Bytes()))
 
 	//Generating Schnorr Public and  Secret Key
 	SSK, SPK := Preprocessing()
@@ -122,11 +126,15 @@ func Round2(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	Generate_Alphas(T, alphas, poly, peer_number, "vss/"+peer_number)
 	// Round2_Values.Alphas = alphas
 	for i = 0; i < T; i++ {
-		Round2_Values.Poly[i], _ = Encode.ScalarToStringHex(curve, poly[i])
-		Round2_Values.Alphas[i], _ = Encode.PointToStringHex(curve, alphas[i])
+		Pol, _ := Encode.ScalarToStringHex(curve, poly[i])
+		alp, _ := Encode.PointToStringHex(curve, alphas[i])
+		Round2_Values.Poly = append(Round2_Values.Poly, Pol)
+		Round2_Values.Alphas = append(Round2_Values.Alphas, alp)
+
 	}
 	for i = 0; i < int64(Peer_Count); i++ {
-		Round2_Values.Shares[i], _ = Encode.ScalarToStringHex(curve, share[i])
+		sha, _ := Encode.ScalarToStringHex(curve, share[i])
+		Round2_Values.Shares = append(Round2_Values.Shares, sha)
 	}
 
 }
@@ -156,6 +164,7 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	// Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
 	temp, _ = hex.DecodeString(Round3_Values.ESK)
 	Sender_ESK, _ := elg_curve.Scalar.SetBytes(temp)
+	// fmt.Println("Se:", Sender_ESK)
 
 	//Path to vss generated parameters
 	// path3 := "vss/" + peer_number
@@ -164,6 +173,12 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	for i = 1; i <= int64(Peer_Count); i++ {
 		if i == int64(p.My_Index+1) {
+			encrypted_temp := ths.Encrypted_Share{
+				C1: "",
+				C2: "",
+				C3: "",
+			}
+			Round3_Values.Encrypted_Shares = append(Round3_Values.Encrypted_Shares, encrypted_temp)
 			continue
 		}
 
@@ -171,7 +186,7 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		share, _ := Encode.StringHexToScalar(curve, Round3_Values.Shares[i-1])
 
 		//Reading Elgamal Public key of ith user
-		data, err := os.ReadFile("Data/" + "INSERT HERE" + "/keys/EPK.txt")
+		data, err := os.ReadFile("Received/" + strconv.Itoa(int(i)) + "/Keys/EPK.txt")
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -186,9 +201,9 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		//Ecryption using (current peer's Secret key,current peer's public key, ith users(receivers) public key)
 		C1, C2, C3, _ := AuthEncryption(toEncrypt, Sender_ESK, Sender_EPK, EPK_receiver)
 		encrypted := ths.Encrypted_Share{
-			C1: string(C1.ToAffineCompressed()),
-			C2: C2,
-			C3: C3,
+			C1: fmt.Sprintf("%x", C1.ToAffineCompressed()),
+			C2: string(C2),
+			C3: hex.EncodeToString(C3),
 		}
 
 		Round3_Values.Encrypted_Shares = append(Round3_Values.Encrypted_Shares, encrypted)
@@ -206,15 +221,21 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	var T int64 = int64(p.Threshold)
 	fmt.Println("THRESHOLD:", T)
 
-	path4 := "Data/" + peer_number
+	// path4 := "Data/" + peer_number
 	// Reciever_EPK_file, _ := ioutil.ReadFile(path + "/EPK.txt")
 	// Reciever_EPK_file, _ = hex.DecodeString(string(Reciever_EPK_file))
 	// Reciever_EPK, _ := elg_curve.Point.FromAffineCompressed(Reciever_EPK_file)
 
-	Reciever_EPK, _ := Get_EPK(path4 + "/EPK.txt")
+	//Reading Sender's elgamal Public key
 
-	//Reading elgamal Secret key of current peer
-	Reciever_ESK, _ := Get_ESK(path4 + "/ESK.txt")
+	temp, _ := hex.DecodeString(Round4_Values.EPK)
+	Reciever_EPK, _ := elgamal_Curve.Point.FromAffineCompressed(temp)
+
+	//Reading Sender's elgamal Secret Key
+	// Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
+
+	temp, _ = hex.DecodeString(Round4_Values.ESK)
+	Reciever_ESK, _ := elgamal_Curve.Scalar.SetBytes(temp)
 
 	var i int64
 	for i = 1; i <= int64(Peer_Count); i++ {
@@ -239,7 +260,7 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 		C3, _ := hex.DecodeString(string(C3_Data))
 
 		//Decryption of shares(C1,C2,C3)
-		time.Sleep(time.Second * 1)
+		// time.Sleep(time.Second * 1)
 		share, err := AuthDecryption(C1, C2, C3, Sender_EPK, Reciever_EPK, Reciever_ESK)
 		fmt.Println("DECRPYPteD:", share)
 
