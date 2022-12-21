@@ -54,7 +54,7 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			})
 			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
 
-			if sender_index == p.My_Index {
+			if sender_index == p.My_Index+1 {
 				continue
 			} else {
 				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_alphas", 0777)
