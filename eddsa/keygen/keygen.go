@@ -115,12 +115,13 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		}
 	}
 	fmt.Println("End of Round 3")
+	p.Round = 3
 
 	//Below Rounds Will be Combined
 	Round4(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Round5(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Values.Keygen.KGC_sign = Data.Keygen_All_Data.KGC_sign
-
+	fmt.Println("HRELRE")
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
 		if i == p.My_Index {
@@ -133,7 +134,6 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			Payload_name: "Third",
 			Payload:      Values,
 			Status:       0}
-
 	}
 	for {
 		if len(p.Round3) == len(p.Peers) {
@@ -147,6 +147,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
+	p.Round = 4
 
 	Round6(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Values.Keygen.Alphas_sign = Data.Keygen_All_Data.Alphas_sign
@@ -177,6 +178,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
+	p.Round = 5
 
 	Round7(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 

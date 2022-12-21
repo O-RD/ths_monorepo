@@ -176,6 +176,27 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 				proceed <- 2
 			}
 
+		} else if message_receive == 3 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round3); i++ {
+					if p.Round3[i].Id == s.Conn().RemotePeer() {
+						p.Round3[i].Ack = 3
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round3) == len(p.Peers) && AckR3(p.Round3) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 3
+			}
+
 		}
 	})
 }
