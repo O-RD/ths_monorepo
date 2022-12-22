@@ -83,6 +83,8 @@ type P2P struct {
 	Round4 []Keygen_Store_Round4
 
 	Round5 []Keygen_Store_Round5
+
+	Round6 []Keygen_Store_Round6
 }
 
 type Moniker_message struct {
@@ -100,6 +102,7 @@ type Keygen_Data struct {
 	Alphas_sign []string
 	Shares_sign []string
 	U_i         string
+	V_i         string
 }
 
 //All the key values generated will be stored in this structure
@@ -125,6 +128,7 @@ type Keygen_Store struct {
 	R   string //Presing R_i
 	U_i string
 	U   string
+	V_i string
 }
 
 type Encrypted_Share struct {
@@ -163,6 +167,12 @@ type Keygen_Store_Round4 struct {
 }
 
 type Keygen_Store_Round5 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round6 struct {
 	Id  peer.ID
 	V1  Round_Data
 	Ack int
