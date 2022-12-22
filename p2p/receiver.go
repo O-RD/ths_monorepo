@@ -115,6 +115,11 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
 
 			}
+		} else if message_receive.Type == 6 {
+			if containsR6(p.Round6, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
 		}
 
 	})
@@ -237,6 +242,27 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 				// p.Round2[0].Ack = 0
 
 				proceed <- 5
+			}
+
+		} else if message_receive == 6 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round6); i++ {
+					if p.Round6[i].Id == s.Conn().RemotePeer() {
+						p.Round6[i].Ack = 6
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round6) == len(p.Peers) && AckR6(p.Round6) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 6
 			}
 
 		}

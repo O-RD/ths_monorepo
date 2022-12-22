@@ -124,12 +124,23 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 				Ack: 0,
 			})
 			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
-			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Signing/U_i", 0777)
-			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Signing/U_i/U_" + strconv.Itoa(sender_index) + ".txt")
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Signing", 0777)
+			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Signing/U_i.txt")
 			f.WriteString(message_receive.Payload.Keygen.U_i)
 
+		} else if message_receive.Type == 6 {
+			p.Round6 = append(p.Round6, ths.Keygen_Store_Round6{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Signing", 0777)
+			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Signing/V_i.txt")
+			f.WriteString(message_receive.Payload.Keygen.V_i)
+			T_arr = append(T_arr, sender_index)
+
 		}
-		fmt.Println(message_receive)
+		// fmt.Println(message_receive)
 
 	}
 }

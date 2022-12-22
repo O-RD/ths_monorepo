@@ -148,6 +148,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		}
 	}
 	p.Round = 4
+	time.Sleep(time.Second * 1)
 
 	Round6(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 	Values.Keygen.Alphas_sign = Data.Keygen_All_Data.Alphas_sign
@@ -179,6 +180,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 		}
 	}
 	p.Round = 5
+	time.Sleep(time.Second * 1)
 
 	Round7(send_chan, p, receive_chan, &Data.Keygen_All_Data)
 
@@ -210,6 +212,49 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 			break
 		}
 	}
-	Signing(send_chan, p, receive_chan, "RANDOM_MESSAGE")
-	// time.Sleep(time.Second * 10)
+
+	Message := "RANDOM_MESSAGE"
+
+	var choice int
+	fmt.Println("Do do Sign the Message:", Message, "\n 1)Yes 2)No ")
+	fmt.Scanln(&choice)
+	time.Sleep(time.Second * 5)
+
+	if choice == 1 {
+		p.Round = 6
+
+		Signing(send_chan, p, receive_chan, &Data.Keygen_All_Data, Message)
+		// time.Sleep(time.Second * 10)
+		Values.Keygen.V_i = Data.Keygen_All_Data.V_i
+		for i := 0; i < len(p.Sorted_Peers); i++ {
+
+			if i == p.My_Index {
+				continue
+			}
+			//if p.Peers[i].Id != p.Host.ID() -> Continue
+			send_chan <- ths.Message{From: *p,
+				Type:         6,
+				To:           p.Sorted_Peers[i].Id,
+				Payload_name: "Sixth",
+				Payload:      Values,
+				Status:       0}
+
+		}
+		for {
+			if len(p.Round3) == len(p.Peers) {
+				Ack_sender <- 6
+				break
+			}
+			time.Sleep(time.Second * 2)
+		}
+		for {
+			if <-proceed_chan == 6 {
+				break
+			}
+		}
+	}
+	time.Sleep(time.Second * 1)
+
+	Combine(send_chan, p, receive_chan, &Data.Keygen_All_Data, Message)
+
 }

@@ -177,8 +177,8 @@ func Commitment_sign(x kyber.Scalar, m string, peer_number string, value_struct 
 
 func Decommitment_j(peer_number string) string {
 
-	path := "Received/" + peer_number + "/Keygen_commit"
-	f1, e1 := os.Open(path + "/Signature_S.txt")
+	path := "Received/" + peer_number + "/Keygen_commit/"
+	f1, e1 := os.Open(path + "Signature_S.txt")
 	if e1 != nil {
 		fmt.Println(e1)
 	}
@@ -187,7 +187,7 @@ func Decommitment_j(peer_number string) string {
 		fmt.Println(e)
 	}
 
-	f2, e2 := os.Open(path + "/Pubkey.txt")
+	f2, e2 := os.Open(path + "Pubkey.txt")
 	if e2 != nil {
 		fmt.Println(e2)
 	}
@@ -195,7 +195,7 @@ func Decommitment_j(peer_number string) string {
 	if e_2 != nil {
 		fmt.Println(e_2)
 	}
-	f3, e3 := os.Open(path + "/KGD.txt")
+	f3, e3 := os.Open(path + "KGD.txt")
 	if e3 != nil {
 		fmt.Println(e3)
 	}
@@ -204,7 +204,7 @@ func Decommitment_j(peer_number string) string {
 		fmt.Println(e_3)
 	}
 
-	message, e4 := ioutil.ReadFile(path + "/Message.txt")
+	message, e4 := ioutil.ReadFile(path + "Message.txt")
 	if e4 != nil {
 		fmt.Println(e4)
 	}
