@@ -7,11 +7,12 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 )
 
 func api_get(send_topic string) []postgres {
     
-	resp, err := http.Get("http://43.205.198.157:3000/get_peers/" + send_topic)
+	resp, err := http.Get(os.Getenv("SERVICE_URL") + "get_peers/" + send_topic)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -39,7 +40,7 @@ type postgres struct {
 
 
 func api_send(p *P2P) {
-	url := "http://43.205.198.157:3000/advertise/"
+	url :=  os.Getenv("SERVICE_URL") + "advertise/"
 	fmt.Println("URL:>", url)
 
 	postBody, _ := json.Marshal(postgres{
@@ -49,7 +50,7 @@ func api_send(p *P2P) {
 	})
 	responseBody := bytes.NewBuffer(postBody)
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("http://43.205.198.157:3000/advertise", "application/json", responseBody)
+	resp, err := http.Post("localhost:3000/advertise", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
