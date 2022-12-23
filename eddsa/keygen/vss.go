@@ -250,14 +250,14 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool, my_index i
 	path := ""
 	path2 := ""
 	if signing {
-		path = "Received/Signing/" + peer_number + "/Shares/share"
+		path = "Data/Presigning_shares"
 	} else {
-		path = "Received/" + peer_number + "/Shares/share"
+		path = "Data/Keygen_shares"
 	}
 	if signing {
-		path2 = "vss/Signing/" + peer_number + "/Indivisual_Share" + peer_number + ".txt"
+		path2 = "Temp/vss/Signing/" + peer_number + "/Indivisual_Share" + peer_number + ".txt"
 	} else {
-		path2 = "vss/" + peer_number + "/Indivisual_Share" + peer_number + ".txt"
+		path2 = "Temp/vss/" + peer_number + "/Indivisual_Share" + peer_number + ".txt"
 	}
 
 	share := []kyber.Scalar{} // to store share
@@ -281,8 +281,9 @@ func Verify_Share(peer_number string, N int64, T int64, signing bool, my_index i
 
 		}
 
-		file, err := os.Open(path + strconv.Itoa(int(i)) + ".txt")
+		file, err := os.Open(path + "/share" + strconv.Itoa(int(i)) + ".txt")
 		if err != nil {
+			fmt.Println("THIS")
 			panic(err)
 		}
 		val, e1 := encoding.ReadHexScalar(curve, file)
@@ -360,9 +361,9 @@ func verify_each_share(peer_number string, peer_count int64, share []kyber.Scala
 		var j int64
 		path := ""
 		if signing {
-			path = "Broadcast/" + strconv.Itoa(int(i)) + "/Signing/Alphas/"
+			path = "Received/" + strconv.Itoa(int(i)) + "/Presigning_alphas/"
 		} else {
-			path = "Broadcast/" + strconv.Itoa(int(i)) + "/Alphas/"
+			path = "Received/" + strconv.Itoa(int(i)) + "/Keygen_alphas/"
 		}
 		alphas := []kyber.Point{} // to store alphas
 

@@ -1,10 +1,16 @@
 package keygen
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	SHA "crypto/sha256"
 	"fmt"
 	"io/ioutil"
 
+	"crypto/rand"
 	"encoding/hex"
+
+	// "encoding/hex"
 	//	elgamal "keygen/ELGAMAL_NEW"
 	"math/big"
 	"os"
@@ -24,10 +30,10 @@ func Fill_default_Keygen() ths.Keygen_Store {
 	elgamal_Curve := curves.ED25519() // Choosen curve : ED25519
 
 	temp_KGC := ths.KGC{
-		Sign:       curve.Scalar().Zero().String(),
-		Public_key: curve.Point().Null().String(),
-		Message:    "nil",
-		KGD:        curve.Point().Null().String(),
+		Signature_S: curve.Scalar().Zero().String(),
+		Public_key:  curve.Point().Null().String(),
+		Message:     "nil",
+		KGD:         curve.Point().Null().String(),
 	}
 
 	temp_alphas := []string{} // to store alphas
@@ -44,6 +50,8 @@ func Fill_default_Keygen() ths.Keygen_Store {
 		SPK:              curve.Point().Null().String(),
 		KGC:              temp_KGC,
 		Alphas:           temp_alphas,
+		Poly:             []string{},
+		Shares:           []string{},
 		Encrypted_Shares: temp_encrypt,
 		V2:               "nil",
 		V3:               "nil",
@@ -629,17 +637,112 @@ func Get_Group_Key(Peer_Count int64, my_index int) kyber.Point {
 	GK = curve.Point().Null()
 	for i = 1; i <= Peer_Count; i++ {
 		if i == int64(my_index+1) {
-			path2 := "vss/" + fmt.Sprint(i) + "/alpha0.txt"
+			path2 := "Temp/vss/" + fmt.Sprint(i) + "/alpha0.txt"
 
 			file, _ := os.Open(path2)
 			temp, _ := encoding.ReadHexPoint(curve, file)
 			GK = GK.Add(GK, temp)
 			continue
 		}
-		path := "Broadcast/" + fmt.Sprint(i) + "/Alphas/alpha0.txt"
+		path := "Received/" + fmt.Sprint(i) + "/keygen_alphas/alpha0.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexPoint(curve, file)
 		GK = GK.Add(GK, temp)
 	}
 	return GK
+}
+
+func Get_Sum_alpha0(Peer_Count int64, my_index int) kyber.Point {
+	var i int64
+	sum := curve.Point().Null()
+	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
+			path2 := "Temp/vss/Signing/" + fmt.Sprint(i) + "/alpha0.txt"
+
+			file2, _ := os.Open(path2)
+			temp, _ := encoding.ReadHexPoint(curve, file2)
+			sum = sum.Add(sum, temp)
+			continue
+		}
+		path := "Received/" + strconv.Itoa(int(i)) + "/Presigning_alphas/alpha0.txt"
+		file, _ := os.Open(path)
+		temp, _ := encoding.ReadHexPoint(curve, file)
+		sum = sum.Add(sum, temp)
+	}
+	return sum
+}
+
+func Encrypted_With_Passcode(key, data []byte) ([]byte, error) {
+	blockCipher, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	gcm, err := cipher.NewGCM(blockCipher)
+	if err != nil {
+		return nil, err
+	}
+
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = rand.Read(nonce); err != nil {
+		return nil, err
+	}
+
+	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+
+	return ciphertext, nil
+}
+
+func Decrypt_With_Passcode(key, data []byte) ([]byte, error) {
+	blockCipher, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	gcm, err := cipher.NewGCM(blockCipher)
+	if err != nil {
+		return nil, err
+	}
+
+	nonce, ciphertext := data[:gcm.NonceSize()], data[gcm.NonceSize():]
+
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return plaintext, nil
+}
+
+func Generate_Passcode(s string) []byte {
+	h := SHA.New()
+
+	h.Write([]byte(s))
+
+	bs := h.Sum(nil)
+	return bs
+
+}
+func Get_Passcode(my_index int) []byte {
+	peer_number := strconv.Itoa(my_index + 1)
+	f, _ := os.ReadFile("Data/" + peer_number + "/PC.txt")
+	return f
+}
+
+func Encrypt_and_Write(data []byte, path string, my_index int) {
+	pc := Get_Passcode(my_index)
+	f, _ := os.Create(path)
+	ct, _ := Encrypted_With_Passcode(pc, data)
+	f.Write(ct)
+
+}
+
+func Read_and_Decrypt(path string, my_index int) ([]byte, error) {
+	pc := Get_Passcode(my_index)
+	ct, _ := os.ReadFile(path)
+	data, err := Decrypt_With_Passcode(pc, ct)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

@@ -2,6 +2,8 @@ package p2p
 
 import (
 	"bufio"
+
+	// "encoding"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -91,7 +93,32 @@ func Input_Stream_listener(p *ths.P2P, receiver_ch chan ths.Payload) {
 			}
 		} else if message_receive.Type == 2 {
 			if containsR2(p.Round2, s.Conn().RemotePeer()) == false {
+				// p.Sorted_Peers
 				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
+		} else if message_receive.Type == 3 {
+			fmt.Print("HERE-------------------")
+			if containsR3(p.Round3, s.Conn().RemotePeer()) == false {
+				fmt.Print("HERE-------------------")
+
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
+		} else if message_receive.Type == 4 {
+			if containsR4(p.Round4, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
+		} else if message_receive.Type == 5 {
+			if containsR5(p.Round5, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
+			}
+		} else if message_receive.Type == 6 {
+			if containsR6(p.Round6, s.Conn().RemotePeer()) == false {
+				receiver_ch <- ths.Payload{Sender: s.Conn().RemotePeer(), Payload: message_receive.Payload, Payload_name: message_receive.Payload_name, Type: message_receive.Type}
+
 			}
 		}
 
@@ -152,6 +179,90 @@ func Acknowledgement_listener(p *ths.P2P, proceed chan int) {
 				// p.Round2[0].Ack = 0
 
 				proceed <- 2
+			}
+
+		} else if message_receive == 3 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round3); i++ {
+					if p.Round3[i].Id == s.Conn().RemotePeer() {
+						p.Round3[i].Ack = 3
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round3) == len(p.Peers) && AckR3(p.Round3) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 3
+			}
+
+		} else if message_receive == 4 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round4); i++ {
+					if p.Round4[i].Id == s.Conn().RemotePeer() {
+						p.Round4[i].Ack = 4
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round4) == len(p.Peers) && AckR4(p.Round4) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 4
+			}
+
+		} else if message_receive == 5 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round5); i++ {
+					if p.Round5[i].Id == s.Conn().RemotePeer() {
+						p.Round5[i].Ack = 5
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round5) == len(p.Peers) && AckR5(p.Round5) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 5
+			}
+
+		} else if message_receive == 6 {
+			for {
+				flag := 0
+				for i := 0; i < len(p.Round6); i++ {
+					if p.Round6[i].Id == s.Conn().RemotePeer() {
+						p.Round6[i].Ack = 6
+						flag = 1
+					}
+				}
+				if flag == 1 {
+					break
+				} else {
+					time.Sleep(time.Millisecond)
+				}
+			}
+			if len(p.Round6) == len(p.Peers) && AckR6(p.Round6) {
+				// p.Round2[0].Ack = 0
+
+				proceed <- 6
 			}
 
 		}
