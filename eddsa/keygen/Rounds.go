@@ -40,18 +40,13 @@ func Round1(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	Round1_Values.EPK = fmt.Sprintf("%x", EPK.ToAffineCompressed())
 	Round1_Values.ESK = hex.EncodeToString(ESK.Bytes())
 
-	// fmt.Println("->", Round1_Values.ESK)
-	// temp, _ := hex.DecodeString(Round1_Values.ESK)
-	// tempESK, _ := elgamal_Curve.Scalar.SetBytes(temp)
 	fmt.Println(" \n ")
 	fmt.Println("Elgamal Public Key:")
 	fmt.Println(EPK)
 	fmt.Println("Elgamal Secret Key:")
 	fmt.Println(string(ESK.Bytes()))
 	fmt.Printf("\n")
-	// fmt.Println("GELFJSD ESK:", string(tempESK.Bytes()))
 
-	//Generating Schnorr Public and  Secret Key
 	SSK, SPK := Preprocessing()
 	fmt.Println("Schnorr Public Key:")
 	fmt.Println(SPK)
@@ -161,13 +156,8 @@ func Round3(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	Sender_EPK, _ := elg_curve.Point.FromAffineCompressed(temp)
 
 	//Reading Sender's elgamal Secret Key
-	// Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
 	temp, _ = hex.DecodeString(Round3_Values.ESK)
 	Sender_ESK, _ := elg_curve.Scalar.SetBytes(temp)
-	// fmt.Println("Se:", Sender_ESK)
-
-	//Path to vss generated parameters
-	// path3 := "Temp/vss/" + peer_number
 
 	var i int64
 
@@ -223,18 +213,12 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	var T int64 = int64(p.Threshold)
 	fmt.Println("THRESHOLD:", T)
 
-	// path4 := "Data/" + peer_number
-	// Reciever_EPK_file, _ := ioutil.ReadFile(path + "/EPK.txt")
-	// Reciever_EPK_file, _ = hex.DecodeString(string(Reciever_EPK_file))
-	// Reciever_EPK, _ := elg_curve.Point.FromAffineCompressed(Reciever_EPK_file)
-
 	//Reading Sender's elgamal Public key
 
 	temp, _ := hex.DecodeString(Round4_Values.EPK)
 	Reciever_EPK, _ := elgamal_Curve.Point.FromAffineCompressed(temp)
 
 	//Reading Sender's elgamal Secret Key
-	// Sender_ESK_file, _ := ioutil.ReadFile(path13 + "/ESK.txt")
 
 	temp, _ = hex.DecodeString(Round4_Values.ESK)
 	Reciever_ESK, _ := elgamal_Curve.Scalar.SetBytes(temp)
@@ -320,8 +304,6 @@ func Round5(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	r_i := curve.Scalar().Pick(curve.RandomStream())
 	Round5_Values.R_i, _ = Encode.ScalarToStringHex(curve, r_i)
-
-	// U_i, r_i := Setup_Keys(T, int64(Peer_Count), peer_number, g)
 
 	os.MkdirAll("Data/"+peer_number+"/Signing/", os.ModePerm)
 	file, _ := os.Create("Data/" + peer_number + "Signing/r_i.txt")
@@ -429,45 +411,3 @@ func Round7(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	Round7_Values.U, _ = Encode.PointToStringHex(curve, U)
 
 }
-
-// func Round8(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload, Round7_Values *ths.Keygen_Store){
-
-// 	peer_number := fmt.Sprint(p.My_Index + 1)
-// 	Peer_Count := len(p.Sorted_Peers)
-// 	fmt.Println("PEERCOUNT:", Peer_Count)
-// 	fmt.Println("PEERNUMBER:", peer_number)
-// 	var T int64 = int64(p.Threshold)
-// 	fmt.Println("THRESHOLD:", T)
-
-// 	// var T_arr []int
-// 	// T_arr = append(T_arr, my_index+1)
-
-// 	//THIS IS THE ARRAY OF SIGNERS, WILL COME FROM FRONT END:
-// 	T_arr:=[]int{1,2}
-
-// 	// r_i:= curve.Scalar().Pick(curve.RandomStream())
-
-// 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
-
-// 	file, _ := os.Open("Received/Signing/" + peer_number + "/R_i.txt")
-
-// 	file, _ = os.Open("Received/" + peer_number + "/G.txt")
-// 	x_i, _ := encoding.ReadHexScalar(curve, file)
-
-// 	file, _ = os.Open("Data/" + peer_number + "/Signing/U.txt")
-// 	U, _ := encoding.ReadHexPoint(curve, file)
-// 	fmt.Println("U from PreSign:", U.String())
-
-// 	V_i, U_i := Signing_T_Unkown(U, x_i, Message, peer_number)
-// 	fmt.Println("U_i returned from sign:", U_i.String(), "\n")
-
-// 	X_i := curve.Point().Mul(x_i, g)
-// 	fmt.Println("X_i", X_i.String())
-
-// 	if Verify_sign_share(V_i, U, U_i, Message, X_i) {
-// 		fmt.Println("INDIVIDUAL SHARES ARE VERIFIED")
-// 	} else {
-// 		fmt.Println("NOT VERIFIED INDIVIDUAL SHARES")
-// 	}
-
-// }
