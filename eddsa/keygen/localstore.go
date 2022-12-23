@@ -34,7 +34,8 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			f, _ := os.Create(path + "/EPK.txt")
 			f.WriteString(message_receive.Payload.Keygen.EPK)
 			f, _ = os.Create(path + "/SPK.txt")
-			f.WriteString(message_receive.Payload.Keygen.SPK)
+			SPK_enc, _ := Encrypted_With_Passcode(Get_Passcode(p.My_Index), []byte(message_receive.Payload.Keygen.SPK))
+			f.Write(SPK_enc)
 
 			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_commit", 0777)
 			path = "Received/" + strconv.Itoa(sender_index) + "/Keygen_commit"

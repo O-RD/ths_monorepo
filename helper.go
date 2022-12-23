@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -31,7 +30,7 @@ func Process_flags() (string, string, int, int, string) {
 
 	// strconv.Itoa(rand.Intn(99999-20000) + 20000)
 	name := temp_topic()
-	fmt.Println("NAME:", name)
+	// fmt.Println("NAME:", name)
 	var topic = *flag.String("topic", name, "channel id for connecting")
 	var version = *flag.String("v", "t1", "Type of run") //
 	var threshold = *flag.Int("t", 2, "Threshold")

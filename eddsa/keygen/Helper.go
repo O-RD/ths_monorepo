@@ -1,10 +1,16 @@
 package keygen
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	SHA "crypto/sha256"
 	"fmt"
 	"io/ioutil"
 
+	"crypto/rand"
 	"encoding/hex"
+
+	// "encoding/hex"
 	//	elgamal "keygen/ELGAMAL_NEW"
 	"math/big"
 	"os"
@@ -664,4 +670,79 @@ func Get_Sum_alpha0(Peer_Count int64, my_index int) kyber.Point {
 		sum = sum.Add(sum, temp)
 	}
 	return sum
+}
+
+func Encrypted_With_Passcode(key, data []byte) ([]byte, error) {
+	blockCipher, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	gcm, err := cipher.NewGCM(blockCipher)
+	if err != nil {
+		return nil, err
+	}
+
+	nonce := make([]byte, gcm.NonceSize())
+	if _, err = rand.Read(nonce); err != nil {
+		return nil, err
+	}
+
+	ciphertext := gcm.Seal(nonce, nonce, data, nil)
+
+	return ciphertext, nil
+}
+
+func Decrypt_With_Passcode(key, data []byte) ([]byte, error) {
+	blockCipher, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+
+	gcm, err := cipher.NewGCM(blockCipher)
+	if err != nil {
+		return nil, err
+	}
+
+	nonce, ciphertext := data[:gcm.NonceSize()], data[gcm.NonceSize():]
+
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return plaintext, nil
+}
+
+func Generate_Passcode(s string) []byte {
+	h := SHA.New()
+
+	h.Write([]byte(s))
+
+	bs := h.Sum(nil)
+	return bs
+
+}
+func Get_Passcode(my_index int) []byte {
+	peer_number := strconv.Itoa(my_index + 1)
+	f, _ := os.ReadFile("Data/" + peer_number + "/PC.txt")
+	return f
+}
+
+func Encrypt_and_Write(data []byte, path string, my_index int) {
+	pc := Get_Passcode(my_index)
+	f, _ := os.Create(path)
+	ct, _ := Encrypted_With_Passcode(pc, data)
+	f.Write(ct)
+
+}
+
+func Read_and_Decrypt(path string, my_index int) ([]byte, error) {
+	pc := Get_Passcode(my_index)
+	ct, _ := os.ReadFile(path)
+	data, err := Decrypt_With_Passcode(pc, ct)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
