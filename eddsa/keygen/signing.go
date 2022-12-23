@@ -74,9 +74,9 @@ func Combine(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Paylo
 	res := Verify_sign_share(Vsum, Usum, Usum, Message, GKey)
 	if res {
 		fmt.Println("SUCCESS VERIFICATION OF SIGNATURE")
+		fmt.Println("FINAL SIGNATURE:", Vsum.String())
 	} else {
 		fmt.Println("FAILED TO VERIFIY")
 	}
-	fmt.Println("FINAL SIGNATURE:", Vsum.String())
 
 }
