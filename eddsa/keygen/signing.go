@@ -24,7 +24,7 @@ func Signing(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Paylo
 	fmt.Printf("********************************************* SIGNING PHASES STARTED ******************************************\n")
 
 	// file, _ := os.Open("Data/Signing/R_i.txt")
-	G_byte, err := Read_and_Decrypt("Data/" + peer_number + "/G.txt")
+	G_byte, err := Read_and_Decrypt("Data/"+peer_number+"/G.txt", p.My_Index)
 	if err != nil {
 		fmt.Println("WRONG PASSCODE")
 		return

@@ -15,8 +15,6 @@ func main() {
 }
 
 func start_keygen() {
-	// party := p2p.P2p_init()
-	// var version string
 
 	var party ths.P2P
 
@@ -33,7 +31,7 @@ func start_keygen() {
 
 	var send_chan = make(chan ths.Message)
 	var receiver_ch = make(chan ths.Payload)
-	//add channel)
+
 	// ths.Find_peers_api(&party)
 	p2p.Create_Peer(&party)
 	time.Sleep(time.Second)

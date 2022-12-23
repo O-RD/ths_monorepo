@@ -21,39 +21,6 @@ type Data struct {
 	message string
 }
 
-// type Signature struct {
-// 	r kyber.Point
-// 	s kyber.Scalar
-// }
-
-// func Hash(s string) kyber.Scalar {
-// 	sha256.Reset()
-// 	sha256.Write([]byte(s))
-
-// 	return curve.Scalar().SetBytes(sha256.Sum(nil))
-// }
-
-// m: Message
-// x: Private key
-// func Sign(m string, x kyber.Scalar) Signature {
-// 	// Get the base of the curve.
-// 	g := curve.Point().Base()
-
-// 	// Pick a random k from allowed set.
-// 	k := curve.Scalar().Pick(curve.RandomStream())
-
-// 	// r = k * G (a.k.a the same operation as r = g^k)
-// 	r := curve.Point().Mul(k, g)
-
-// 	// Hash(m || r)
-// 	e := Hash(m + r.String())
-
-// 	// s = k - e * x
-// 	s := curve.Scalar().Sub(k, curve.Scalar().Mul(e, x))
-
-// 	return Signature{r: r, s: s}
-// }
-
 // m: Message
 // S: Signature
 func Comit_PublicKey(m string, S ths.Signature) kyber.Point {
@@ -86,15 +53,9 @@ func Comit_Verify(m string, S ths.Signature, y kyber.Point) bool {
 	// Construct the actual 's * G'
 	sG := curve.Point().Mul(S.S, g)
 
-	//fmt.Println(sG)
-	//fmt.Println(sGv)
 	// Equality check; ensure signature and public key outputs to s * G.
 	return sG.Equal(sGv)
 }
-
-// func (Ss Signature) String() string {
-// 	return fmt.Sprintf("(r=%s, s=%s)", Ss.R, Ss.S)
-// }
 
 func Commitment(x kyber.Scalar, m string, peer_number string, value_struct *ths.Keygen_Store) {
 	path1 := "Temp/Commitment/" + peer_number + "/KGC"
@@ -212,12 +173,8 @@ func Decommitment_j(peer_number string) string {
 	newS := ths.Signature{}
 	newS.S = sig_d
 	newS.R = KGD_j
-	// fmt.Println(string(message))
-	// fmt.Println(pub_key)
-	// fmt.Println(sig_d)
-	//fmt.Println(newS.s)
+
 	t := Comit_Verify(string(message), newS, pub_key)
-	//fmt.Println(t)
 	if t {
 
 		return pub_key.String()
@@ -262,12 +219,8 @@ func Decommitment_j_sign(peer_number string) string {
 	newS := ths.Signature{}
 	newS.S = sig_d
 	newS.R = KGD_j
-	// fmt.Println("INSIDE DEComit ->> Message:", string(message))
-	// fmt.Println("INSIDE DECMIT Pubkey:", pub_key)
-	// fmt.Println("INSIDE DECMIT Sign:", sig_d)
-	// fmt.Println("INSIDE DECMIT newS.s:", newS.s)
+
 	t := Comit_Verify(string(message), newS, pub_key)
-	//fmt.Println(t)
 	if t {
 
 		return pub_key.String()
