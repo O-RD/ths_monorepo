@@ -723,21 +723,22 @@ func Generate_Passcode(s string) []byte {
 	return bs
 
 }
-func Get_Passcode() []byte {
-	f, _ := os.ReadFile("Data/PC.txt")
+func Get_Passcode(my_index int) []byte {
+	peer_number := strconv.Itoa(my_index + 1)
+	f, _ := os.ReadFile("Data/" + peer_number + "/PC.txt")
 	return f
 }
 
-func Encrypt_and_Write(data []byte, path string) {
-	pc := Get_Passcode()
+func Encrypt_and_Write(data []byte, path string, my_index int) {
+	pc := Get_Passcode(my_index)
 	f, _ := os.Create(path)
 	ct, _ := Encrypted_With_Passcode(pc, data)
 	f.Write(ct)
 
 }
 
-func Read_and_Decrypt(path string) ([]byte, error) {
-	pc := Get_Passcode()
+func Read_and_Decrypt(path string, my_index int) ([]byte, error) {
+	pc := Get_Passcode(my_index)
 	ct, _ := os.ReadFile(path)
 	data, err := Decrypt_With_Passcode(pc, ct)
 	if err != nil {

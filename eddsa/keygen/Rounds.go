@@ -272,7 +272,7 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	fmt.Println("Private Key Share:", G.String(), "\n")
 	path5 := "Data/" + peer_number
 	os.MkdirAll(path5, os.ModePerm)
-	Encrypt_and_Write([]byte(G_hex), path5+"/G.txt")
+	Encrypt_and_Write([]byte(G_hex), path5+"/G.txt", p.My_Index)
 	// file5, _ := os.Create(path5 + "/G.txt"
 	// encoding.WriteHexScalar(curve, file5, G)
 

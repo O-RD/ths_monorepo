@@ -17,7 +17,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 	fmt.Scanln(&Passcode)
 	PC := Generate_Passcode(Passcode)
 	os.MkdirAll("Data/"+strconv.Itoa(p.My_Index+1), 0777)
-	file, _ := os.Create("Data/PC.txt")
+	file, _ := os.Create("Data/" + strconv.Itoa(p.My_Index+1) + "/PC.txt")
 	file.Write(PC)
 
 	time.Sleep(time.Second * 3)
