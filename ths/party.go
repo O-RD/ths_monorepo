@@ -114,10 +114,10 @@ func Create_peer(p *P2P) {
 					Moniker: p.Moniker,
 				}
 				b_message, _ := json.Marshal(message)
-				_, _ = send_stream.Write(append(b_message, '\n'))
-				// if err == nil {
+				_, err = send_stream.Write(append(b_message, '\n'))
+				if err == nil {
 
-				// }
+				}
 				// fmt.Println("Sent to", external_peer.ID)
 
 			}

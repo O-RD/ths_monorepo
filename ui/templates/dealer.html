@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <link rel="stylesheet" media="screen" href="../assets/css/style.css">
+                <script>
+                          function change_bg(){
+                                // console.log( document.getElementById("particles-js").style.backgroundColor.value)
+                                document.getElementById("particles-js").style.backgroundColor="#9c090e";
+                                document.getElementById("loading").style.display="flex";
+                        }
+                </script>
+        </head>
+
+        <body>
+                <div id="particles-js">
+                        <div class="text">
+                                <div class="spinner-box" id="loading" style="display:none">
+                                      
+                                        <div class="leo-border-1">
+                                          <div class="leo-core-1"></div>
+                                        </div> 
+                                        <div class="leo-border-2">
+                                          <div class="leo-core-2"></div>
+                                        </div> 
+                                        
+                                </div>
+                                      
+                                {{if .Success}}
+                                <h1>VAULT ID: <b>{{.Mydata.VaultID}}</b></h1><br>
+                                <h2>Your IP: <b>{{.Mydata.MyIp}}</b><br></h2>
+                                
+                                <form method="POST" action="/keygen">                   
+                                        <label>IP Addresses(seperated with ,)</label><br><input type="text" name="ip" style="width:80%"><br>
+                                        <label>Threshold value T: </label><br><input type="text" name="T"><br><br>
+                                        <input type="submit" value="Start-KeyGen" onclick="change_bg()">
+                                        
+                                </form>
+                                <script src="../assets/js/particles.js"></script>
+                                <script src="../assets/js/app.js"></script>  
+                                <script src="../assets/js/ths.js"></script> 
+                        </div>
+                </div>
+                {{end}}
+
+        </body>
+</html>

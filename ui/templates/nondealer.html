@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+        <head>
+                <meta charset="utf-8">
+                <link rel="stylesheet" media="screen" href="../assets/css/style.css">
+        </head>
+        <body>
+                <div id="particles-js">
+                
+                        <div class="text">
+                        
+                               
+                                <h1>Cick The Pre-Signing Button To Initiate the <br>Signing Process</h1>
+                                
+                                <br>
+                        
+                                <h2>Your IP: </h2>
+                                <b>{{.P2p_send.Host_ip}}</b><br>
+                                <h3>Enter the <b>Message</b></h3><br>
+                                <form method="POST" action="/signing">
+                                        <input type="text" name="message"><br>
+                                        <input style="padding:10px" type="submit" value="Create-Signature">
+                                </form><br>
+                                
+                
+                                <!-- <form method="POST" action="/signing">
+                                        <input type="submit" value="Signing" >
+                                </form><br>
+                                <form method="POST" action="/combine">
+                                        <input type="submit" value="Combine">
+                                </form> -->
+
+                        </div>
+                </div>
+                <script src="../assets/js/particles.js"></script>
+                <script src="../assets/js/app.js"></script>  
+                <script src="../assets/js/ths.js"></script>  
+                
+        </body>
+</html>

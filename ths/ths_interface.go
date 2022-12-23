@@ -77,44 +77,71 @@ type P2P struct {
 	Round1 []Keygen_Store_Round1
 
 	Round2 []Keygen_Store_Round2
+
+	Round3 []Keygen_Store_Round3
+
+	Round4 []Keygen_Store_Round4
+
+	Round5 []Keygen_Store_Round5
+
+	Round6 []Keygen_Store_Round6
 }
 
 type Moniker_message struct {
 	Moniker string
 }
 
-//THe Data to be Broadcasted
+//The Data to be Broadcasted
 type Keygen_Data struct {
-	EPK        string //curves.Point
-	SPK        string //kyber.Point
-	KGC        KGC
-	Alphas     []string
-	Enc_shares []Encrypted_Share
+	EPK         string //curves.Point
+	SPK         string //kyber.Point
+	KGC         KGC
+	Alphas      []string
+	Enc_shares  []Encrypted_Share
+	KGC_sign    KGC
+	Alphas_sign []string
+	Shares_sign []string
+	U_i         string
+	V_i         string
 }
 
+//All the key values generated will be stored in this structure
 type Keygen_Store struct {
-	EPK              string //curves.Point
-	ESK              string //curves.Scalar
-	SSK              string //kyber.Scalar
-	SPK              string //kyber.Point
-	KGC              KGC
-	Alphas           []string
+	EPK    string //curves.Point
+	ESK    string //curves.Scalar
+	SSK    string //kyber.Scalar
+	SPK    string //kyber.Point
+	KGC    KGC
+	Alphas []string
+	Poly   []string
+
+	Shares           []string
 	Encrypted_Shares []Encrypted_Share
 	V2               string
 	V3               string
+	R_i              string //Secret of Presign Poly
+	KGC_sign         KGC
+	Poly_sign        []string
+	Alphas_sign      []string
+	Shares_sign      []string
+
+	R   string //Presing R_i
+	U_i string
+	U   string
+	V_i string
 }
 
 type Encrypted_Share struct {
 	C1 string
-	C2 []byte
-	C3 []byte
+	C2 string
+	C3 string
 }
 
 type KGC struct {
-	Sign       string //kyber.Scalar
-	Public_key string //kyber.Point
-	Message    string
-	KGD        string //kyber.Point
+	Signature_S string //kyber.Scalar
+	Public_key  string //kyber.Point
+	Message     string
+	KGD         string //kyber.Point
 }
 
 type Keygen_Store_Round1 struct {
@@ -123,6 +150,29 @@ type Keygen_Store_Round1 struct {
 	Ack int
 }
 type Keygen_Store_Round2 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+type Keygen_Store_Round3 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round4 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round5 struct {
+	Id  peer.ID
+	V1  Round_Data
+	Ack int
+}
+
+type Keygen_Store_Round6 struct {
 	Id  peer.ID
 	V1  Round_Data
 	Ack int

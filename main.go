@@ -11,6 +11,7 @@ import (
 func main() {
 
 	start_keygen()
+
 }
 
 func start_keygen() {
@@ -38,5 +39,6 @@ func start_keygen() {
 	time.Sleep(time.Second)
 	ths.Sort_Peers(&party) // Adds host id and sorts peers - adds this party values to peer_list
 
+	//Performs Base Keygen - and Sample Signature for interested users
 	keygen.Start(send_chan, &party, receiver_ch)
 }

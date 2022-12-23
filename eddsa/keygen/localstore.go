@@ -17,44 +17,129 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 	go p2p.Send_Ack(p, Ack_sender)
 	for {
 		// Figure how to store - use
-		temp := <-receive_chan
-		if temp.Type == 1 {
-			p.Round1 = append(p.Round1, ths.Keygen_Store_Round1{Id: temp.Sender,
-				V1:  temp.Payload,
+		message_receive := <-receive_chan
+		if message_receive.Type == 1 {
+			p.Round1 = append(p.Round1, ths.Keygen_Store_Round1{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
 				Ack: 0,
 			})
-
-			Sender_index := p2p.GetIndex(p.Sorted_Peers, temp.Sender)
-			fmt.Println("Received Round 1 Values From Sender:", Sender_index)
-
-			//Storing Recieved EPK
-			err1 := os.MkdirAll("Temps/Received/"+strconv.Itoa(Sender_index), os.ModePerm)
-			if err1 != nil {
-				fmt.Println("Error")
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+			if sender_index <= 0 {
+				fmt.Println("User Not Found")
+				return
 			}
-			_f, err := os.OpenFile("Temps/Received/"+strconv.Itoa(Sender_index)+"/EPK.txt", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
-			if err != nil {
-				fmt.Println("ERROR:")
-			}
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keys", 0777)
 
-			_f.WriteString(temp.Payload.Keygen.EPK)
+			path := "Received/" + strconv.Itoa(sender_index) + "/Keys"
+			f, _ := os.Create(path + "/EPK.txt")
+			f.WriteString(message_receive.Payload.Keygen.EPK)
+			f, _ = os.Create(path + "/SPK.txt")
+			f.WriteString(message_receive.Payload.Keygen.SPK)
 
-			// if len(p.Round1) == len(p.Peers) {
-			// 	Ack_sender <- 1
-			// }
-
-		} else if temp.Type == 2 {
-			p.Round2 = append(p.Round2, ths.Keygen_Store_Round2{Id: temp.Sender,
-				V1:  temp.Payload,
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_commit", 0777)
+			path = "Received/" + strconv.Itoa(sender_index) + "/Keygen_commit"
+			f, _ = os.Create(path + "/Signature_S.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC.Signature_S)
+			f, _ = os.Create(path + "/Pubkey.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC.Public_key)
+			f, _ = os.Create(path + "/Message.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC.Message)
+			f, _ = os.Create(path + "/KGD.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC.KGD)
+		} else if message_receive.Type == 2 {
+			p.Round2 = append(p.Round2, ths.Keygen_Store_Round2{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
 				Ack: 0,
 			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
 
+			if sender_index == p.My_Index+1 {
+				continue
+			} else {
+				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_alphas", 0777)
+				var i int
+				path := "Received/" + strconv.Itoa(sender_index) + "/Keygen_alphas"
+				for i = 0; i < p.Threshold; i++ {
+					f, _ := os.Create(path + "/alpha" + strconv.Itoa(i) + ".txt")
+					f.WriteString(message_receive.Payload.Keygen.Alphas[i])
+				}
+				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Keygen_shares", 0777)
+
+				f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C1.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C1)
+				f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C2.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C2)
+				f, _ = os.Create("Received/" + strconv.Itoa(sender_index) + "/Keygen_shares/C3.txt")
+				f.WriteString(message_receive.Payload.Keygen.Enc_shares[p.My_Index].C3)
+			}
 			// if len(p.Round2) == len(p.Peers) {
 			// 	Ack_sender <- 2
 			// }
 
+		} else if message_receive.Type == 3 {
+			p.Round3 = append(p.Round3, ths.Keygen_Store_Round3{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Presigning_commit", 0777)
+			path := "Received/" + strconv.Itoa(sender_index) + "/Presigning_commit"
+			f, _ := os.Create(path + "/Signature_S.txt")
+			// fmt.Println("INSIDE LOCAL:", message_receive.Payload.Keygen.KGC_sign.Signature_S)
+			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Signature_S)
+			f, _ = os.Create(path + "/Pubkey.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Public_key)
+			f, _ = os.Create(path + "/Message.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC_sign.Message)
+			f, _ = os.Create(path + "/KGD.txt")
+			f.WriteString(message_receive.Payload.Keygen.KGC_sign.KGD)
+		} else if message_receive.Type == 4 {
+			p.Round4 = append(p.Round4, ths.Keygen_Store_Round4{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+
+			if sender_index == p.My_Index+1 {
+				continue
+			} else {
+				os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Presigning_alphas", 0777)
+
+				path := "Received/" + strconv.Itoa(sender_index) + "/Presigning_alphas"
+				var i int
+				for i = 0; i < p.Threshold; i++ {
+					f, _ := os.Create(path + "/alpha" + strconv.Itoa(i) + ".txt")
+					f.WriteString(message_receive.Payload.Keygen.Alphas_sign[i])
+				}
+				os.MkdirAll("Data/Presigning_shares", 0777)
+				f, _ := os.Create("Data/Presigning_shares/share" + strconv.Itoa(sender_index) + ".txt")
+				f.WriteString(message_receive.Payload.Keygen.Shares_sign[p.My_Index])
+			}
+
+		} else if message_receive.Type == 5 {
+			p.Round5 = append(p.Round5, ths.Keygen_Store_Round5{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Signing", 0777)
+			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Signing/U_i.txt")
+			f.WriteString(message_receive.Payload.Keygen.U_i)
+
+		} else if message_receive.Type == 6 {
+			p.Round6 = append(p.Round6, ths.Keygen_Store_Round6{Id: message_receive.Sender,
+				V1:  message_receive.Payload,
+				Ack: 0,
+			})
+			sender_index := p2p.Get_index(p.Sorted_Peers, message_receive.Sender)
+			os.MkdirAll("Received/"+strconv.Itoa(sender_index)+"/Signing", 0777)
+			f, _ := os.Create("Received/" + strconv.Itoa(sender_index) + "/Signing/V_i.txt")
+			f.WriteString(message_receive.Payload.Keygen.V_i)
+			T_arr = append(T_arr, sender_index)
+
 		}
-		fmt.Println(temp)
+		// fmt.Println(message_receive)
 
 	}
 }

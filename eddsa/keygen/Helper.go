@@ -24,10 +24,10 @@ func Fill_default_Keygen() ths.Keygen_Store {
 	elgamal_Curve := curves.ED25519() // Choosen curve : ED25519
 
 	temp_KGC := ths.KGC{
-		Sign:       curve.Scalar().Zero().String(),
-		Public_key: curve.Point().Null().String(),
-		Message:    "nil",
-		KGD:        curve.Point().Null().String(),
+		Signature_S: curve.Scalar().Zero().String(),
+		Public_key:  curve.Point().Null().String(),
+		Message:     "nil",
+		KGD:         curve.Point().Null().String(),
 	}
 
 	temp_alphas := []string{} // to store alphas
@@ -44,6 +44,8 @@ func Fill_default_Keygen() ths.Keygen_Store {
 		SPK:              curve.Point().Null().String(),
 		KGC:              temp_KGC,
 		Alphas:           temp_alphas,
+		Poly:             []string{},
+		Shares:           []string{},
 		Encrypted_Shares: temp_encrypt,
 		V2:               "nil",
 		V3:               "nil",
@@ -629,17 +631,37 @@ func Get_Group_Key(Peer_Count int64, my_index int) kyber.Point {
 	GK = curve.Point().Null()
 	for i = 1; i <= Peer_Count; i++ {
 		if i == int64(my_index+1) {
-			path2 := "vss/" + fmt.Sprint(i) + "/alpha0.txt"
+			path2 := "Temp/vss/" + fmt.Sprint(i) + "/alpha0.txt"
 
 			file, _ := os.Open(path2)
 			temp, _ := encoding.ReadHexPoint(curve, file)
 			GK = GK.Add(GK, temp)
 			continue
 		}
-		path := "Broadcast/" + fmt.Sprint(i) + "/Alphas/alpha0.txt"
+		path := "Received/" + fmt.Sprint(i) + "/keygen_alphas/alpha0.txt"
 		file, _ := os.Open(path)
 		temp, _ := encoding.ReadHexPoint(curve, file)
 		GK = GK.Add(GK, temp)
 	}
 	return GK
+}
+
+func Get_Sum_alpha0(Peer_Count int64, my_index int) kyber.Point {
+	var i int64
+	sum := curve.Point().Null()
+	for i = 1; i <= Peer_Count; i++ {
+		if i == int64(my_index+1) {
+			path2 := "Temp/vss/Signing/" + fmt.Sprint(i) + "/alpha0.txt"
+
+			file2, _ := os.Open(path2)
+			temp, _ := encoding.ReadHexPoint(curve, file2)
+			sum = sum.Add(sum, temp)
+			continue
+		}
+		path := "Received/" + strconv.Itoa(int(i)) + "/Presigning_alphas/alpha0.txt"
+		file, _ := os.Open(path)
+		temp, _ := encoding.ReadHexPoint(curve, file)
+		sum = sum.Add(sum, temp)
+	}
+	return sum
 }
