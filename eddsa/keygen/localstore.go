@@ -46,7 +46,6 @@ func Run_listener(p *ths.P2P, receive_chan chan ths.Payload, proceed chan int, A
 			f.WriteString(message_receive.Payload.Keygen.KGC.Message)
 			f, _ = os.Create(path + "/KGD.txt")
 			f.WriteString(message_receive.Payload.Keygen.KGC.KGD)
-
 		} else if message_receive.Type == 2 {
 			p.Round2 = append(p.Round2, ths.Keygen_Store_Round2{Id: message_receive.Sender,
 				V1:  message_receive.Payload,
