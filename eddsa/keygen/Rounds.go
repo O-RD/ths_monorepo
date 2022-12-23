@@ -284,11 +284,13 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 	fmt.Println(peer_number, "Verifying Shares")
 
 	G := Verify_Share(peer_number, int64(Peer_Count), int64(T), false, p.My_Index)
+	G_hex, _ := encoding.ScalarToStringHex(curve, G)
 	fmt.Println("Private Key Share:", G.String(), "\n")
 	path5 := "Data/" + peer_number
 	os.MkdirAll(path5, os.ModePerm)
-	file5, _ := os.Create(path5 + "/G.txt")
-	encoding.WriteHexScalar(curve, file5, G)
+	Encrypt_and_Write([]byte(G_hex), path5+"/G.txt")
+	// file5, _ := os.Create(path5 + "/G.txt"
+	// encoding.WriteHexScalar(curve, file5, G)
 
 	// if verify_GK(int64(Peer_Count), T) {
 	// 	fmt.Println("VERIFIED G")
@@ -299,7 +301,7 @@ func Round4(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payloa
 
 	//G-> input to sign t unknwn
 	GK := Get_Group_Key(int64(Peer_Count), p.My_Index)
-	file5, _ = os.Create(path5 + "/GroupKey.txt")
+	file5, _ := os.Create(path5 + "/GroupKey.txt")
 	encoding.WriteHexPoint(curve, file5, GK)
 	fmt.Println("GROUP KEY:", GK.String())
 

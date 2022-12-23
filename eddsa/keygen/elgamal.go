@@ -78,29 +78,29 @@ func Elgamal_KeyGen() (curves.Scalar, curves.Point) { //Generates <Key_pri,KeyPu
 	G := curve.Point.Generator()
 	private := curve.Scalar.Random(crand.Reader)
 	public := G.Mul(private)
-	path := "./PublicParameters.json"
+	// path := "./PublicParameters.json"
 
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0777)
-	if err != nil {
-		log.Fatalf("[-] Error Creating PublicParameters File: %s", err)
-	}
+	// // file, err := os.OpenFile(path, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0777)
+	// // if err != nil {
+	// // 	log.Fatalf("[-] Error Creating PublicParameters File: %s", err)
+	// // }
 
-	_, err = fmt.Fprintf(file, "Public Key(Hex):\n%x\n", public.ToAffineCompressed())
-	if err != nil {
-		log.Fatalf("[-] Error Writing")
-	}
+	// // _, err = fmt.Fprintf(file, "Public Key(Hex):\n%x\n", public.ToAffineCompressed())
+	// // if err != nil {
+	// // 	log.Fatalf("[-] Error Writing")
+	// // }
 
-	path = "./PrivateKey.json"
+	// // path = "./PrivateKey.json"
 
-	file, err = os.OpenFile(path, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0777)
-	if err != nil {
-		log.Fatalf("[-] Error Creating PrivateKey File: %s", err)
-	}
+	// // file, err = os.OpenFile(path, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0777)
+	// // if err != nil {
+	// // 	log.Fatalf("[-] Error Creating PrivateKey File: %s", err)
+	// // }
 
-	_, err = fmt.Fprintf(file, "Private Key(Hex):\n%x\n", private.Bytes())
-	if err != nil {
-		log.Fatalf("[-] Error Writing")
-	}
+	// // _, err = fmt.Fprintf(file, "Private Key(Hex):\n%x\n", private.Bytes())
+	// // if err != nil {
+	// // 	log.Fatalf("[-] Error Writing")
+	// // }
 
 	fmt.Println("[+] KeyGen Completed")
 	return private, public

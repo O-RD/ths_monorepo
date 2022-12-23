@@ -2,6 +2,7 @@ package keygen
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/O-RD/ths_monorepo/p2p"
@@ -11,6 +12,17 @@ import (
 func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload) {
 
 	//listener runs the libp2p listener and store received values
+
+	fmt.Println("Passcode For Key Storage:")
+	var Passcode string
+	fmt.Scanln(&Passcode)
+	PC := Generate_Passcode(Passcode)
+	os.MkdirAll("Data/", 0777)
+	file, _ := os.Create("Data/PC.txt")
+	file.Write(PC)
+
+	time.Sleep(time.Second * 3)
+
 	proceed_chan := make(chan int)
 	Ack_sender := make(chan int)
 	p.Round = 1
@@ -44,7 +56,7 @@ func Start(send_chan chan ths.Message, p *ths.P2P, receive_chan chan ths.Payload
 
 	fmt.Println("Initiate Keygen")
 	fmt.Println("Starting Round 1")
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 2)
 
 	for i := 0; i < len(p.Sorted_Peers); i++ {
 
