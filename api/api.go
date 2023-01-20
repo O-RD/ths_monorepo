@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 
 func api_get_group_request(group_pub_key string) (random_message string) {
 
-	resp, err := http.Get("localhost:3000/request_to_save_group/" + group_pub_key)
+	resp, err := http.Get(os.Getenv("SERVICE_URL") + "request_to_save_group/" + group_pub_key)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -26,7 +27,7 @@ func api_get_group_request(group_pub_key string) (random_message string) {
 func api_post_group_request(key *group_sign_key) {
 	//func api_post_group_request(p *P2P) {
 
-	url := "localhost:3000/save_group_key"
+	url := os.Getenv("SERVICE_URL") +  "save_group_key"
 	fmt.Println("URL:>", url)
 
 	postBody, _ := json.Marshal(group_sign_key{
@@ -39,7 +40,7 @@ func api_post_group_request(key *group_sign_key) {
 	})
 	responseBody := bytes.NewBuffer(postBody)
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("localhost:3000/save_group_key", "application/json", responseBody)
+	resp, err := http.Post(os.Getenv("SERVICE_URL") + "save_group_key", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
@@ -51,7 +52,7 @@ func api_post_group_request(key *group_sign_key) {
 
 func get_request_to_save_random(group_pub_key string) (random_message string) {
 
-	resp, err := http.Get("localhost:3000/request_to_save_random/" + group_pub_key)
+	resp, err := http.Get(os.Getenv("SERVICE_URL") + "request_to_save_random/" + group_pub_key)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -65,7 +66,7 @@ func get_request_to_save_random(group_pub_key string) (random_message string) {
 
 func post_save_random_values(key *group_random_data) {
 
-	url := "localhost:3000/save_random_values"
+	url := os.Getenv("SERVICE_URL") + "save_random_values"
 	fmt.Println("URL:>", url)
 
 	postBody, _ := json.Marshal(group_random_data{
@@ -80,7 +81,7 @@ func post_save_random_values(key *group_random_data) {
 	})
 	responseBody := bytes.NewBuffer(postBody)
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("localhost:3000/save_random_values", "application/json", responseBody)
+	resp, err := http.Post(os.Getenv("SERVICE_URL") + "save_random_values", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
@@ -91,7 +92,7 @@ func post_save_random_values(key *group_random_data) {
 
 func get_Get_signatures(group_pub_key string) (random_message string) {
 
-	resp, err := http.Get("localhost:3000/get_signatures/" + group_pub_key)
+	resp, err := http.Get(os.Getenv("SERVICE_URL")+ "get_signatures/" + group_pub_key)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -105,7 +106,7 @@ func get_Get_signatures(group_pub_key string) (random_message string) {
 
 func get_all_signatures(group_pub_key string) (random_message string) {
 
-	resp, err := http.Get("localhost:3000/request_to_save_random/" + group_pub_key)
+	resp, err := http.Get(os.Getenv("SERVICE_URL") + "request_to_save_random/" + group_pub_key)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -118,13 +119,13 @@ func get_all_signatures(group_pub_key string) (random_message string) {
 }
 
 func post_Post_signatures(key *Part_signature) {
-	url := "localhost:3000/post_signature"
+	url := os.Getenv("SERVICE_URL") +  "post_signature"
 	fmt.Println("URL:>", url)
 
 	postBody, _ := json.Marshal(key)
 	responseBody := bytes.NewBuffer(postBody)
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("localhost:3000/post_signature", "application/json", responseBody)
+	resp, err := http.Post(os.Getenv("SERVICE_URL") + "post_signature", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
@@ -135,14 +136,14 @@ func post_Post_signatures(key *Part_signature) {
 
 func post_get_signatures(key *sign_req_struct) (result []signed_msgs) {
 
-	url := "localhost:3000/get_signatures"
+	url := os.Getenv("SERVICE_URL") + "get_signatures"
 	fmt.Println("URL:>", url)
 
 	postBody, _ := json.Marshal(key)
 	responseBody := bytes.NewBuffer(postBody)
 
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("localhost:3000/get_signatures", "application/json", responseBody)
+	resp, err := http.Post(os.Getenv("SERVICE_URL") + "get_signatures", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)

@@ -50,7 +50,7 @@ func api_send(p *P2P) {
 	})
 	responseBody := bytes.NewBuffer(postBody)
 	//Leverage Go's HTTP Post function to make request
-	resp, err := http.Post("localhost:3000/advertise", "application/json", responseBody)
+	resp, err := http.Post(os.Getenv("SERVICE_URL") + "advertise", "application/json", responseBody)
 	//Handle Error
 	if err != nil {
 		log.Fatalf("An Error Occured %v", err)
