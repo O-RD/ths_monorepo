@@ -1,6 +1,6 @@
 # Insaanity - THS
 
-THS is a MPC Protocol Based on genero and goldfeder https://eprint.iacr.org/2019/114.pdf
+THS is a MPC Protocol (EdDSA)
 
 Features of the Repo Currently
 - EdDSA Pute cryptography scheme
